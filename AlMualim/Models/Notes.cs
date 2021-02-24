@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace AlMualim.Models
@@ -16,5 +17,6 @@ namespace AlMualim.Models
         public string Url {get; set;}
         public DateTime DateAdded {get; set;}
         public DateTime LastUpdated {get; set;}
+        public ICollection<Topics> Topics {get; set;}
     }
 }

@@ -4,14 +4,16 @@ using AlMualim.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AlMualim.Migrations
 {
     [DbContext(typeof(AlMualimDbContext))]
-    partial class AlMualimDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210224011254_topics-surahs")]
+    partial class topicssurahs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -87,36 +89,6 @@ namespace AlMualim.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("Topics");
-                });
-
-            modelBuilder.Entity("NotesTopics", b =>
-                {
-                    b.Property<int>("NotesID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TopicsID")
-                        .HasColumnType("int");
-
-                    b.HasKey("NotesID", "TopicsID");
-
-                    b.HasIndex("TopicsID");
-
-                    b.ToTable("NotesTopics");
-                });
-
-            modelBuilder.Entity("NotesTopics", b =>
-                {
-                    b.HasOne("AlMualim.Models.Notes", null)
-                        .WithMany()
-                        .HasForeignKey("NotesID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("AlMualim.Models.Topics", null)
-                        .WithMany()
-                        .HasForeignKey("TopicsID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

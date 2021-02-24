@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace AlMualim.Models
@@ -9,5 +10,6 @@ namespace AlMualim.Models
         [StringLength(128)]
         [Required]
         public string Title {get; set;}
+        public ICollection<Notes> Notes {get; set;}
     }
 }

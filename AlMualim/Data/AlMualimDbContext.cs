@@ -6,7 +6,8 @@ namespace AlMualim.Data
     public class AlMualimDbContext : DbContext
     {
         public AlMualimDbContext(DbContextOptions<AlMualimDbContext> options) : base(options) {}
-        
-        // DataContexts
+        public DbSet<AlMualim.Models.Notes> Notes { get; set; }
+        public DbSet<AlMualim.Models.Topics> Topics { get; set; }
+        public DbSet<AlMualim.Models.Surah> Surah { get; set; }
     }
 }
