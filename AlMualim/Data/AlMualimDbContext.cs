@@ -7,5 +7,6 @@ namespace AlMualim.Data
     {
         public AlMualimDbContext(DbContextOptions<AlMualimDbContext> options) : base(options) {}
         
+        // DataContexts
     }
 }
