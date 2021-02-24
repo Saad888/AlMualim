@@ -10,6 +10,6 @@ namespace AlMualim.Models
         [StringLength(128)]
         [Required]
         public string Title {get; set;}
-        public ICollection<Notes> Notes {get; set;}
+        public List<Notes> Notes {get; set;}
     }
 }

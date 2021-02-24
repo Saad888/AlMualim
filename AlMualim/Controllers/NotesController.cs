@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -46,6 +47,8 @@ namespace AlMualim.Controllers
         // GET: Notes/Create
         public IActionResult Create()
         {
+            var topicsList = _context.Topics.ToList(); 
+            ViewData["Topics"] = topicsList;
             return View();
         }
 
@@ -54,8 +57,20 @@ namespace AlMualim.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Title,Description,Surah,Ruku,Url,DateAdded,LastUpdated")] Notes notes)
+        public async Task<IActionResult> Create([Bind("ID,Title,Description,Surah,Ruku,Url,DateAdded,LastUpdated")] Notes notes, string TopicsList)
         {
+            // Update times
+            notes.DateAdded = DateTime.Now;
+            notes.LastUpdated = DateTime.Now;
+
+            // Get Topics List
+            if (notes.Topics == null) notes.Topics = new List<Topics>();
+            notes.Topics.Clear();
+            var fullTopicsList = _context.Topics.ToList();
+            var selectedTopics = fullTopicsList.Where(t => Request.Form["SelectedTopics"].Contains(t.ID.ToString())).ToList();
+            selectedTopics.ForEach(t => notes.Topics.Add(t));
+
+            // Submit if model state is valid
             if (ModelState.IsValid)
             {
                 _context.Add(notes);
