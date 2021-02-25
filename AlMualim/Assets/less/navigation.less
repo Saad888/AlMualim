@@ -1,16 +1,56 @@
 /* NAVIGATION CSS */
 .navigation{
-    /* Positioning */
+    //Positioning
     height: 100px;
     margin: 0;
     width: 100%;
 
-    /* Display */
-    background-color: blue;
+    // Display
+    display: flex;
+    align-items: center;
 
     .nav-container{
-        height: 100%;
-        width: 50%;
-        background-color: red;
+        // Positioning
+        height: 50px;
+        width: 600px;
+        margin: auto auto;
+
+        // Display:
+        display: flex;
+        justify-content: space-between;
+
+        .nav-selection{
+            height: 100%;
+            width: 120px;
+            margin: 0;
+
+            position: relative;
+            background-color: rgb(3, 95, 0);
+
+            transition: background-color 0.25s;
+
+            a{
+                position: absolute;
+                height: 100%;
+                width: 100%;
+            }
+
+            .nav-text{
+                height:100%;
+                width: 100%;
+                margin: 0;
+
+                // Text
+                line-height: 50px;
+                font-size: 16px;
+                text-align: center;
+                font-weight: bold;
+                color: white;
+            }
+
+            &:hover{
+                background-color: rgb(4, 128, 0);
+            }
+        }
     }
 }
