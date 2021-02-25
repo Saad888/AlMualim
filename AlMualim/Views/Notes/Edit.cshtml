@@ -49,6 +49,18 @@
                 <span asp-validation-for="LastUpdated" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label class="contorl-label">Topics</label>
+                <select name="SelectedTopics" multiple>
+                    @foreach (Topics topic in (List<Topics>)ViewData["Topics"])
+                    {
+                        @if (Model.Topics.Any(t => t.ID == topic.ID))
+                        {<option value="@topic.ID" selected>@topic.Title</option>} 
+                        else
+                        {<option value="@topic.ID">@topic.Title</option>} 
+                    }
+                </select>
+            </div>
+            <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>

@@ -23,7 +23,7 @@ namespace AlMualim.Controllers
         // GET: Notes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Notes.ToListAsync());
+            return View(await _context.Notes.Include(n => n.Topics).ToListAsync());
         }
 
         // GET: Notes/Details/5
@@ -34,12 +34,15 @@ namespace AlMualim.Controllers
                 return NotFound();
             }
 
-            var notes = await _context.Notes
-                .FirstOrDefaultAsync(m => m.ID == id);
+            var allNotes = await _context.Notes.Include(n => n.Topics).ToListAsync();
+            var notes = allNotes.FirstOrDefault(n => n.ID == id);
+
             if (notes == null)
             {
                 return NotFound();
             }
+
+            ViewData["AllTopics"] = _context.Topics.ToList().Select(i => i.Title);
 
             return View(notes);
         }
@@ -57,7 +60,7 @@ namespace AlMualim.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Title,Description,Surah,Ruku,Url,DateAdded,LastUpdated")] Notes notes, string TopicsList)
+        public async Task<IActionResult> Create([Bind("ID,Title,Description,Surah,Ruku,Url,DateAdded,LastUpdated")] Notes notes)
         {
             // Update times
             notes.DateAdded = DateTime.Now;
@@ -88,11 +91,15 @@ namespace AlMualim.Controllers
                 return NotFound();
             }
 
-            var notes = await _context.Notes.FindAsync(id);
+            var allNotes = await _context.Notes.Include(n => n.Topics).ToListAsync();
+            var notes = allNotes.FirstOrDefault(n => n.ID == id);
             if (notes == null)
             {
                 return NotFound();
             }
+            
+            var topicsList = _context.Topics.ToList(); 
+            ViewData["Topics"] = topicsList;
             return View(notes);
         }
 
@@ -101,12 +108,16 @@ namespace AlMualim.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Title,Description,Surah,Ruku,Url,DateAdded,LastUpdated")] Notes notes)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Title,Description,Surah,Ruku,Url,DateAdded,LastUpdated,Topics")] Notes notes)
         {
             if (id != notes.ID)
             {
                 return NotFound();
             }
+            
+            // Update times
+            notes.LastUpdated = DateTime.Now;
+
 
             if (ModelState.IsValid)
             {
@@ -126,6 +137,15 @@ namespace AlMualim.Controllers
                         throw;
                     }
                 }
+                
+                // Update topics
+                var originalNote = await _context.Notes.Include(c => c.Topics).FirstOrDefaultAsync(c => c.ID == notes.ID);
+                originalNote.Topics.Clear();
+
+                var originalTopics = await _context.Topics.ToListAsync();
+                Request.Form["SelectedTopics"].ToList().ForEach(st => originalNote.Topics.Add(originalTopics.FirstOrDefault(ot => ot.ID.ToString() == st)));
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
             return View(notes);

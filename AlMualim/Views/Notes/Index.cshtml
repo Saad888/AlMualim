@@ -33,6 +33,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.LastUpdated)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Topics)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -59,6 +62,11 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.LastUpdated)
+            </td>
+            <td>
+                <p>
+                    @String.Join(',', item.Topics.Select(t => t.Title))
+                </p>
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |

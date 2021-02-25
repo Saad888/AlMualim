@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AlMualim.Migrations
 {
     [DbContext(typeof(AlMualimDbContext))]
-    [Migration("20210224012756_adding-collections-to-notes")]
-    partial class addingcollectionstonotes
+    [Migration("20210225024458_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -81,9 +81,6 @@ namespace AlMualim.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("NotesID")
-                        .HasColumnType("int");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(128)
@@ -91,21 +88,37 @@ namespace AlMualim.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("NotesID");
-
                     b.ToTable("Topics");
                 });
 
-            modelBuilder.Entity("AlMualim.Models.Topics", b =>
+            modelBuilder.Entity("NotesTopics", b =>
                 {
-                    b.HasOne("AlMualim.Models.Notes", null)
-                        .WithMany("Topics")
-                        .HasForeignKey("NotesID");
+                    b.Property<int>("NotesID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TopicsID")
+                        .HasColumnType("int");
+
+                    b.HasKey("NotesID", "TopicsID");
+
+                    b.HasIndex("TopicsID");
+
+                    b.ToTable("NotesTopics");
                 });
 
-            modelBuilder.Entity("AlMualim.Models.Notes", b =>
+            modelBuilder.Entity("NotesTopics", b =>
                 {
-                    b.Navigation("Topics");
+                    b.HasOne("AlMualim.Models.Notes", null)
+                        .WithMany()
+                        .HasForeignKey("NotesID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AlMualim.Models.Topics", null)
+                        .WithMany()
+                        .HasForeignKey("TopicsID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
