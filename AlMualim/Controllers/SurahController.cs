@@ -21,9 +21,13 @@ namespace AlMualim.Controllers
         }
 
         // GET: Surah
+        public async Task<IActionResult> Index()
+        {
 
+            return View();
+        }
 
-        // GET: Surah/slug
+        // GET: Surah/{slug}
 
     }
 
