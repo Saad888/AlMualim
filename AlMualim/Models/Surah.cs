@@ -16,5 +16,10 @@ namespace AlMualim.Models
             Translation = translation;
             Slug = title.ToLower().Replace("'", "").Replace(" ", "");
         }
+
+        public override string ToString()
+        {
+            return $"{Title} - ({Translation})";
+        }
     }
 }

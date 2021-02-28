@@ -6,8 +6,13 @@
 
 <h1>Notes By Surah</h1>
 <div class="surah-container">
-    <div class="surah">
-
-        <a  asp-route-id="tester"></a> 
-    </div>
+    @foreach (var item in Model)
+    {
+        <div class="surah">
+            <a asp-action="Notes" asp-route-slug="@item.Slug" class="link-box"></a> 
+            <div class="surah-number">@item.ID</div>
+            <div class="surah-text">@item.ToString()</div>
+            <div class="surah-arrow">></div>
+        </div>
+    }
 </div>

@@ -1,0 +1,48 @@
+@model IEnumerable<AlMualim.Models.Notes>
+
+@{
+    ViewData["Title"] = "Surah Notes";
+    var surah = (Surah)ViewData["Surah"];
+}
+
+
+<h1>@surah.ToString()</h1>
+<div class="surah-notes-container">
+    @foreach (var ruku in (List<int?>)ViewData["RukuList"])
+    {
+        <div class="ruku-container">
+            <div class="ruku-display">
+                <a href="javascript:void(0)" class="link-box"></a>
+                @if (ruku == null)
+                {
+                    <div class="ruku-text">General Notes</div>
+                } 
+                else
+                {
+                    <div class="ruku-text">Ruku @ruku</div>
+                }
+                <div class="ruku-arrow">V</div>
+            </div>
+            <div class="ruku-notes-container">
+                @foreach (var note in Model.Where(n => n.Ruku == ruku))
+                {
+                    <div class="ruku-note-container">
+                        <a asp-controller="Notes" asp-action="Details" asp-route-id="@note.ID" class="link-box"></a>
+                        <div class="ruku-note-text"> - @note.Title</div>
+                        <div class="ruku-note-arrow">></div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+<script>
+    $(document).ready(function()
+    {
+        $(".ruku-display").click(function()
+        {
+            $(this).parent().toggleClass("active");
+        });
+    });
+</script>
