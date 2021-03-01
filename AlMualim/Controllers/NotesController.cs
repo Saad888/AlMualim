@@ -34,7 +34,7 @@ namespace AlMualim.Controllers
                 return NotFound();
             }
 
-            var allNotes = await _context.Notes.Include(n => n.Topics).ToListAsync();
+            var allNotes = await _context.Notes.Include(n => n.Topics).Include(n => n.Tags).ToListAsync();
             var notes = allNotes.FirstOrDefault(n => n.ID == id);
 
             if (notes == null)
@@ -60,7 +60,7 @@ namespace AlMualim.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Title,Description,Surah,Ruku,Url,DateAdded,LastUpdated")] Notes notes)
+        public async Task<IActionResult> Create([Bind("ID,Title,Description,Surah,Ruku,Url,DateAdded,LastUpdated")] Notes notes, string TagInputs)
         {
             // Update times
             notes.DateAdded = DateTime.Now;
@@ -72,6 +72,25 @@ namespace AlMualim.Controllers
             var fullTopicsList = _context.Topics.ToList();
             var selectedTopics = fullTopicsList.Where(t => Request.Form["SelectedTopics"].Contains(t.ID.ToString())).ToList();
             selectedTopics.ForEach(t => notes.Topics.Add(t));
+
+            // Get and save tags
+            if (notes.Tags == null) notes.Tags = new List<Tags>();
+            var allTags = await _context.Tags.ToListAsync();
+            var addedTags = TagInputs.ToLower().Split(" ").Distinct();
+            foreach(var newTag in addedTags)
+            {
+                var existingTag = allTags.FirstOrDefault(t => t.Title == newTag);
+                if (existingTag != null)
+                {
+                    notes.Tags.Add(existingTag);
+                } 
+                else
+                {
+                    var newTagObj = new Tags() {Title = newTag};
+                    _context.Tags.Add(newTagObj);
+                    notes.Tags.Add(newTagObj);
+                }
+            }
 
             // Submit if model state is valid
             if (ModelState.IsValid)

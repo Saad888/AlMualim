@@ -53,10 +53,16 @@
             @Html.DisplayFor(model => model.LastUpdated)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
+            @Html.DisplayNameFor(model => model.Topics)
         </dt>
         <dd class = "col-sm-10">
             @String.Join(", ", Model.Topics.Select(t => t.Title))
+        </td>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Tags)
+        </dt>
+        <dd class = "col-sm-10">
+            @String.Join(", ", Model.Tags.Select(t => t.Title))
         </td>
     </dl>
 </div>

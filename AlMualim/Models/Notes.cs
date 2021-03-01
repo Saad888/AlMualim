@@ -18,5 +18,19 @@ namespace AlMualim.Models
         public DateTime DateAdded {get; set;}
         public DateTime LastUpdated {get; set;}
         public List<Topics> Topics {get; set;}
+        public List<Tags> Tags {get; set;}
+
+        public string GetSearchString(Surah surah = null)
+        {
+            var searchString = Title + " " + Description + " ";
+            if (surah != null)
+                searchString += Surah.ToString() + " " + Ruku + " ";
+            if (Topics != null)
+                Topics.ForEach(t => searchString += t.Title + " ");
+            if (Tags != null)
+                Topics.ForEach(t => searchString += t.Title + " ");
+
+            return searchString.ToLower();
+        }
     }
 }

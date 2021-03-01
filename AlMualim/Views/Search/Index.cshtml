@@ -1,0 +1,23 @@
+@model IEnumerable<AlMualim.Models.Notes>
+
+@{
+    ViewData["Title"] = "Search";
+}
+
+<h1>Search</h1>
+
+
+<form asp-action="Index">
+    <input name="surah" class="form-control" />
+    <input name="ruku" class="form-control" />
+    <input name="topic" class="form-control" />
+    <input name="search" class="form-control" />
+    <div class="form-group">
+        <input type="submit" value="Index" class="btn btn-primary" />
+    </div>
+</form>
+
+@foreach(var note in Model)
+{
+    <p>@note.Title</p>
+}
