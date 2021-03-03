@@ -7,20 +7,20 @@
 }
 
 <h1>@topic.Title</h1>
-<div class="topics-notes-container">
+<div class="generic-notes-container">
     @foreach (var note in Model)
     {
-        <div class="topic-note-container">
+        <div class="generic-note-container">
             <a asp-controller="Notes" asp-action="Details" asp-route-id="@note.ID" class="link-box"></a>
             @if (note.Surah != null)
             {
-                <div class="topic-note-text"> - @note.Title (@surah.First(s => s.ID == note.Surah).Title)</div>
+                <div class="generic-note-text"> - @note.Title (@surah.First(s => s.ID == note.Surah).Title)</div>
             }
             else
             {
-                <div class="topic-note-text"> - @note.Title</div>
+                <div class="generic-note-text"> - @note.Title</div>
             }
-            <div class="topic-note-arrow">></div>
+            <div class="generic-note-arrow">></div>
         </div>
     }
 </div>

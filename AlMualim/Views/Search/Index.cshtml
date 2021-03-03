@@ -2,22 +2,42 @@
 
 @{
     ViewData["Title"] = "Search";
+    var surah = (List<Surah>)ViewData["Surah"];
 }
 
-<h1>Search</h1>
+<div class="search-container">
+    <h1>Search</h1>
 
+    <form asp-action="Index" class="search-filter-container">
+        <input name="surah" class="form-control" />
+        <input name="ruku" class="form-control" />
+        <input name="topic" class="form-control" />
+        <input name="search" class="form-control" />
+        <div class="form-group">
+            <input type="submit" value="Index" class="btn btn-primary" />
+        </div>
+    </form>
 
-<form asp-action="Index">
-    <input name="surah" class="form-control" />
-    <input name="ruku" class="form-control" />
-    <input name="topic" class="form-control" />
-    <input name="search" class="form-control" />
-    <div class="form-group">
-        <input type="submit" value="Index" class="btn btn-primary" />
-    </div>
-</form>
+    @if(Model != null && Model.Count() > 0)
+    {
+        <div class="search-results-container">
+            <h1>Results</h1>
 
-@foreach(var note in Model)
-{
-    <p>@note.Title</p>
-}
+            @foreach(var note in Model)
+            {
+                <div class="generic-note-container">
+                    <a asp-controller="Notes" asp-action="Details" asp-route-id="@note.ID" class="link-box"></a>
+                    @if (note.Surah != null)
+                    {
+                        <div class="generic-note-text"> - @note.Title (@surah.First(s => s.ID == note.Surah).Title)</div>
+                    }
+                    else
+                    {
+                        <div class="generic-note-text"> - @note.Title</div>
+                    }
+                    <div class="generic-note-arrow">></div>
+                </div>
+            }
+        </div>
+    }
+</div>

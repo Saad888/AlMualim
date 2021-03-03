@@ -40,9 +40,9 @@ namespace AlMualim.Controllers
             notes = notes.Where(n => (topic != null ? n.Topics.Any(t => t.ID == topic) : true)).ToList();
 
             // Filter by search string
-            if (String.IsNullOrEmpty(search))
+            var surahs = await _context.Surah.ToDictionaryAsync(s => s.ID); 
+            if (!String.IsNullOrEmpty(search))
             {
-                var surahs = await _context.Surah.ToDictionaryAsync(s => s.ID); 
                 notes = notes.Where(note => 
                 {
                     var surah = note.Surah != null ? surahs[(int)note.Surah] : null;
@@ -51,6 +51,9 @@ namespace AlMualim.Controllers
                     return searchString.Contains(search.ToLower());
                 }).ToList();
             }
+
+            // Get surah list
+            ViewData["Surah"] = surahs.Values.ToList();
 
             return View(notes);
         }
