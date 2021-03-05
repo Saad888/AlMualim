@@ -74,21 +74,24 @@ namespace AlMualim.Controllers
             selectedTopics.ForEach(t => notes.Topics.Add(t));
 
             // Get and save tags
-            if (notes.Tags == null) notes.Tags = new List<Tags>();
-            var allTags = await _context.Tags.ToListAsync();
-            var addedTags = TagInputs.ToLower().Split(" ").Distinct();
-            foreach(var newTag in addedTags)
+            if(TagInputs != null)
             {
-                var existingTag = allTags.FirstOrDefault(t => t.Title == newTag);
-                if (existingTag != null)
+                if (notes.Tags == null) notes.Tags = new List<Tags>();
+                var allTags = await _context.Tags.ToListAsync();
+                var addedTags = TagInputs.ToLower().Split(" ").Distinct();
+                foreach(var newTag in addedTags)
                 {
-                    notes.Tags.Add(existingTag);
-                } 
-                else
-                {
-                    var newTagObj = new Tags() {Title = newTag};
-                    _context.Tags.Add(newTagObj);
-                    notes.Tags.Add(newTagObj);
+                    var existingTag = allTags.FirstOrDefault(t => t.Title == newTag);
+                    if (existingTag != null)
+                    {
+                        notes.Tags.Add(existingTag);
+                    } 
+                    else
+                    {
+                        var newTagObj = new Tags() {Title = newTag};
+                        _context.Tags.Add(newTagObj);
+                        notes.Tags.Add(newTagObj);
+                    }
                 }
             }
 

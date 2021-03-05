@@ -3,18 +3,54 @@
 @{
     ViewData["Title"] = "Search";
     var surah = (List<Surah>)ViewData["Surah"];
+    var topics = (List<Topics>)ViewData["Topics"];
+    var searchParams = (Dictionary<string, object>)ViewData["SearchParams"];
+    var surahParam = (int?)searchParams["Surah"];
+    var rukuParam = (int?)searchParams["Ruku"];
+    var topicParam = (int?)searchParams["Topic"];
+    var searchParam = (string)searchParams["Search"];
 }
 
 <div class="search-container">
     <h1>Search</h1>
 
-    <form asp-action="Index" class="search-filter-container">
-        <input name="surah" class="form-control" />
-        <input name="ruku" class="form-control" />
-        <input name="topic" class="form-control" />
-        <input name="search" class="form-control" />
-        <div class="form-group">
-            <input type="submit" value="Index" class="btn btn-primary" />
+    <form method="POST" asp-action="Index" class="search-filters-container">
+        <div class="search-filter-container">
+            <div class="search-filter-text">Surah</div>
+            <select name="surah" class="form-control">
+                <option value="">---</option>
+                @foreach(var s in surah)
+                {
+                    @if((int?)s.ID == surahParam)
+                        {<option value="@s.ID" selected="selected">@s.ToString()</option>}
+                    else
+                        {<option value="@s.ID">@s.ToString()</option>}
+                }
+            </select>
+        </div>
+        <div class="search-filter-container">
+            <div class="search-filter-text">Ruku #</div>
+            <input type="number" name="ruku" class="form-control" min="1" value="@rukuParam"/>
+        </div>
+        <div class="search-filter-container">
+            <div class="search-filter-text">Topics</div>
+            <select name="topic" class="form-control" >
+                <option value="">---</option>
+                @foreach(var t in topics)
+                {
+                    @if((int?)t.ID == topicParam)
+                        {<option value="@t.ID" selected="selected">@t.Title</option>}
+                    else
+                        {<option value="@t.ID">@t.Title</option>}
+                }
+            </select>
+        </div>
+        <div class="search-filter-container">
+            <div class="search-filter-text">Search</div>
+            <input name="searchString" class="form-control" value="@searchParam"/>
+        </div>
+        <div class="form-group" class="search-filter-container">
+            <input type="submit" value="Search" class="btn btn-primary search-btn" />
         </div>
     </form>
 

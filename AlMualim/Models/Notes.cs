@@ -24,11 +24,11 @@ namespace AlMualim.Models
         {
             var searchString = Title + " " + Description + " ";
             if (surah != null)
-                searchString += Surah.ToString() + " " + Ruku + " ";
+                searchString += surah.ToString() + " " + Ruku + " ";
             if (Topics != null)
                 Topics.ForEach(t => searchString += t.Title + " ");
             if (Tags != null)
-                Topics.ForEach(t => searchString += t.Title + " ");
+                Tags.ForEach(t => searchString += t.Title + " ");
 
             return searchString.ToLower();
         }

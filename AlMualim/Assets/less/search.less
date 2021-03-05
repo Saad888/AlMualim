@@ -4,15 +4,43 @@
     width: 100%;
     position: relative;
 
-    .search-filter-container
+    .search-filters-container
     {
         height: auto; 
         width: 100%; 
-        background-color: blue;
         margin-bottom: 10px;
 
         display: flex;
         align-items: center;
         justify-content: space-between;
+
+        .search-filter-container
+        {
+            display: inline-block;
+            height: auto;
+            width: 225px;
+
+            .search-filter-text
+            {
+                font-weight: bold;
+            }
+
+        }
+
+        
+        .form-group
+        {
+            height: 60px;
+            margin-bottom: 0;
+            position: relative;
+
+            .search-btn
+            {
+                margin-top: 20px;
+                height: 40px;
+                width: 125px;
+            }
+        }
+
     }
 }
