@@ -11,11 +11,11 @@ using AlMualim.Models;
 
 namespace AlMualim.Controllers
 {
-    public class NotesController : Controller
+    public class NotesDataController : Controller
     {
         private readonly AlMualimDbContext _context;
 
-        public NotesController(AlMualimDbContext context)
+        public NotesDataController(AlMualimDbContext context)
         {
             _context = context;
         }
