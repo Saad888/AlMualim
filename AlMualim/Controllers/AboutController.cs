@@ -13,8 +13,6 @@ namespace AlMualim.Controllers
 {
     public class AboutController : Controller
     {
-        private readonly AlMualimDbContext _context;
-
         public IActionResult Index()
         {
             return View();

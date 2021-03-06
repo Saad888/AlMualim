@@ -60,7 +60,7 @@ namespace AlMualim.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Title,Description,Surah,Ruku,Url,DateAdded,LastUpdated")] Notes notes, string TagInputs)
+        public async Task<IActionResult> Create([Bind("ID,Title,Description,Surah,Ruku,URL,DateAdded,LastUpdated")] Notes notes, string TagInputs)
         {
             // Update times
             notes.DateAdded = DateTime.Now;
@@ -130,7 +130,7 @@ namespace AlMualim.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Title,Description,Surah,Ruku,Url,DateAdded,LastUpdated,Topics")] Notes notes)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Title,Description,Surah,Ruku,URL,DateAdded,LastUpdated,Topics")] Notes notes)
         {
             if (id != notes.ID)
             {

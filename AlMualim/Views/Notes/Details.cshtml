@@ -2,16 +2,24 @@
 
 @{
     ViewData["Title"] = "Note";
+    var surah = (Surah)ViewData["Surah"];
+    var isUrlValid = (bool)ViewData["IsUrlValid"];
 }
 
 <h1>@Model.Title</h1>
-@if(@Model.Surah != null)
+@if(surah != null)
 {
-
+    <h3>@surah.ToString()</h3>
+}
+<h3>@Model.Description</h3>
+<p>@String.Join(", ", Model.Topics.Select(t => t.Title).ToList())</p>
+@if(isUrlValid)
+{
+    <embed  src="https://docs.google.com/gview?url=@Model.URL&embedded=true" style="width:100%; height:1000px;" ></embed>
 }
 else
 {
-
+    <p> WARNING - Invalid URL Format - Please contact administrator</p>
 }
-
-<iframe src="https://docs.google.com/gview?url=@Model.URL&embedded=true" style="width:718px; height:700px;" frameborder="0"></iframe>
+<p><a href="@Model.URL">Open Directly</a></p>
+<p>Last Updated - @Model.LastUpdated</p>

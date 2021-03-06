@@ -40,6 +40,10 @@ namespace AlMualim.Controllers
             // Get topics and surah
             ViewData["Surah"] = await _context.Surah.FirstOrDefaultAsync(s => s.ID == note.Surah);
 
+            // Validate URL 
+            var isUrlValid = await AzureBlobService.IsBlobUrlReachable(note.URL);
+            ViewData["IsUrlValid"] = isUrlValid;
+
             // Store data
             return View(note);
         }
