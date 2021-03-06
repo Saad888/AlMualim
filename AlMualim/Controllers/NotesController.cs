@@ -8,20 +8,21 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AlMualim.Data;
 using AlMualim.Models;
-using Azure.Storage.Blobs;
+using Microsoft.Extensions.Configuration;
+using AlMualim.Services;
 
 namespace AlMualim.Controllers
 {
     public class NotesController : Controller
     {
 
-        private const string CONNECTIONSTRING = "DefaultEndpointsProtocol=https;AccountName=almualum;AccountKey=+uhxaiFox090mr4OAz3STpzpZy3Z1cXCCWVrqtcTkUfejnwDkzZOL2LQO5lA+MpY+bJhDODViTlpAqEIH4IdPA==;EndpointSuffix=core.windows.net";
-
         private readonly AlMualimDbContext _context;
+        private readonly IConfiguration _configuration;
 
-        public NotesController(AlMualimDbContext context)
+        public NotesController(AlMualimDbContext context, IConfiguration config)
         {
             _context = context;
+            _configuration = config;
         }
 
         public async Task<IActionResult> Details(int? id)
@@ -29,15 +30,18 @@ namespace AlMualim.Controllers
             if(id == null)
                 return NotFound();
 
-            var containerName = "notes";
-            BlobContainerClient container = new BlobContainerClient(CONNECTIONSTRING, containerName);
-            BlobClient blob = container.GetBlobClient("pdftest.pdf");
-            var target = "THISHASBEENDOWNLOADED.pdf";
-            blob.DownloadTo(target);
+            // Get Notes 
+            var note = await _context.Notes.Include(n => n.Topics).FirstOrDefaultAsync(n => n.ID == id);
 
+            // If no notes found, return 404
+            if (note == null)
+                return NotFound();
 
+            // Get topics and surah
+            ViewData["Surah"] = await _context.Surah.FirstOrDefaultAsync(s => s.ID == note.Surah);
 
-            return View();
+            // Store data
+            return View(note);
         }
     }
 }

@@ -1,12 +1,17 @@
 @model AlMualim.Models.Notes
 
 @{
-    ViewData["Title"] = "Topics";
+    ViewData["Title"] = "Note";
 }
 
-<h1>TITLE</h1>
-<iframe src="https://docs.google.com/gview?url=https://almualum.blob.core.windows.net/notes/pdftest.pdf?sp=r&st=2021-03-05T23:57:49Z&se=2021-03-07T07:57:49Z&spr=https&sv=2020-02-10&sr=b&sig=i9WlERYEk%2FLOVSfxnD5MR43OI5xsk849r7hxZnY5jcA%3D&embedded=true" style="width:718px; height:700px;" frameborder="0"></iframe>
+<h1>@Model.Title</h1>
+@if(@Model.Surah != null)
+{
 
-<object width="400" height="500" type="application/pdf" data="/pdf/pdftest.pdf#zoom=85&scrollbar=0&toolbar=0&navpanes=0">
-    <p>Insert your error message here, if the PDF cannot be displayed.</p>
-</object>
+}
+else
+{
+
+}
+
+<iframe src="https://docs.google.com/gview?url=@Model.URL&embedded=true" style="width:718px; height:700px;" frameborder="0"></iframe>

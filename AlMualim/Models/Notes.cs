@@ -14,7 +14,7 @@ namespace AlMualim.Models
         public string Description {get; set;}
         public int? Surah {get; set;}
         public int? Ruku {get; set;}
-        public string BlobName {get; set;}
+        public string URL {get; set;}
         public DateTime DateAdded {get; set;}
         public DateTime LastUpdated {get; set;}
         public List<Topics> Topics {get; set;}
