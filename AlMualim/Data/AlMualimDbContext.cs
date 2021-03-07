@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using AlMualim.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace AlMualim.Data
 {
-    public class AlMualimDbContext : DbContext
+    public class AlMualimDbContext : IdentityDbContext
     {
         public AlMualimDbContext(DbContextOptions<AlMualimDbContext> options) : base(options) {}
         public DbSet<AlMualim.Models.Notes> Notes { get; set; }

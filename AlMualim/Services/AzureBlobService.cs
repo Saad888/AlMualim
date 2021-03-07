@@ -21,14 +21,8 @@ namespace AlMualim.Services
 
         static AzureBlobService()
         {
-            // Build configuration service
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json");
-            var configuration = builder.Build();
-
             // Get connection string
-            ConnectionString = configuration.GetConnectionString("AzureBlobConnectionString");
+            ConnectionString = AppSettings.Config.GetConnectionString("AzureBlobConnectionString");
 
             // Get Notes Container
             NotesContainer = new BlobContainerClient(ConnectionString, CONTAINER_NAME_NOTES);
