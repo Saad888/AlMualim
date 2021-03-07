@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AlMualim.Migrations
 {
     [DbContext(typeof(AlMualimDbContext))]
-    [Migration("20210307200324_update")]
-    partial class update
+    [Migration("20210307221404_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
