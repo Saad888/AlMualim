@@ -2,10 +2,12 @@ using System;
 using System.Net;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 using System.IO;
 using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Http;
+using Azure.Storage.Blobs.Models;
 
 namespace AlMualim.Services
 {
@@ -96,9 +98,23 @@ namespace AlMualim.Services
         public static async Task DeleteBlob(string url)
         {
             var blob = GetBlobFromUrl(url);
-            await blob.DeleteIfExistsAsync(Azure.Storage.Blobs.Models.DeleteSnapshotsOption.IncludeSnapshots);
+            await blob.DeleteIfExistsAsync(DeleteSnapshotsOption.IncludeSnapshots);
         }
 
+        public static async Task DeleteAllExtraData(List<string> urls)
+        {
+            var blobNames = urls.Select(u => GetBlobNameFromUrl(u)).ToHashSet();
+            // Run through all blobs
+            await foreach(var blob in NotesContainer.GetBlobsAsync())
+            {
+                if (!blobNames.Contains(blob.Name))
+                {
+                    var blobClient = NotesContainer.GetBlobClient(blob.Name);
+                    await blobClient.DeleteAsync(DeleteSnapshotsOption.IncludeSnapshots);
+                }
+            }
+        }
+        
         #region Private Methods
         private static async Task<string> GenerateBlobName(string inputString)
         {
@@ -120,6 +136,11 @@ namespace AlMualim.Services
         {
             var name = url.Replace(NotesContainer.Uri.AbsoluteUri + "/", "");
             return NotesContainer.GetBlobClient(name);
+        }
+
+        private static string GetBlobNameFromUrl(string url)
+        {
+            return url.Replace(NotesContainer.Uri.AbsoluteUri + "/", "");
         }
         #endregion
     }

@@ -276,6 +276,28 @@ namespace AlMualim.Controllers
         }
         #endregion
 
+        #region Cleanup
+        public async Task<IActionResult> Cleanup()
+        {
+            // Delete all topics not associated with a note
+            var topicsWithoutNotes = await _context.Topics.Include(t => t.Notes).Where(t => t.Notes.Count == 0).ToListAsync();
+            _context.Topics.RemoveRange(topicsWithoutNotes);
+
+            // Delete all tags not associates with a note
+            var tagsWithoutNotes = await _context.Tags.Include(t => t.Notes).Where(t => t.Notes.Count == 0).ToListAsync();
+            _context.Tags.RemoveRange(tagsWithoutNotes);
+
+            // Save database
+            await _context.SaveChangesAsync();
+
+            // Delete all blobs not associated with a note
+            var allUrls = await _context.Notes.Select(n => n.URL).ToListAsync();
+            await AzureBlobService.DeleteAllExtraData(allUrls);
+
+            return RedirectToAction(nameof(Index));
+        }
+        #endregion
+
         #region Private Methods
         private async Task<int?> ModifyTopics(string submitType, TopicModification topicMod)
         {
