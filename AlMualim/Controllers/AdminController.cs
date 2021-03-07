@@ -73,6 +73,7 @@ namespace AlMualim.Controllers
         #endregion
 
         #region Add Notes
+        [Authorize]
         public async Task<IActionResult> Add()
         {
             ViewData["Surah"] = await _context.Surah.ToListAsync();
@@ -84,6 +85,7 @@ namespace AlMualim.Controllers
     
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Add(string submitType, 
                                              ICollection<int> selectedTopics, 
                                              IFormFile notesFile,
@@ -134,6 +136,7 @@ namespace AlMualim.Controllers
         #endregion
 
         #region Edit
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -158,6 +161,7 @@ namespace AlMualim.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Edit(int? id,
                                              string submitType, 
                                              ICollection<int> selectedTopics, 
@@ -225,6 +229,7 @@ namespace AlMualim.Controllers
 
         #region Details
         // GET: Notes/Details/5
+        [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -248,6 +253,7 @@ namespace AlMualim.Controllers
 
         #region Delete
         // GET: Notes/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -267,6 +273,7 @@ namespace AlMualim.Controllers
         // POST: Notes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var notes = await _context.Notes.FindAsync(id);
@@ -279,6 +286,7 @@ namespace AlMualim.Controllers
         #endregion
 
         #region Cleanup
+        [Authorize]
         public async Task<IActionResult> Cleanup()
         {
             // Delete all topics not associated with a note
