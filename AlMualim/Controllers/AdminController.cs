@@ -12,6 +12,7 @@ using AlMualim.Data;
 using AlMualim.Models;
 using Microsoft.Extensions.Configuration;
 using AlMualim.Services;
+using Microsoft.AspNetCore.Authorization;
 using FuzzySharp;
 
 namespace AlMualim.Controllers
@@ -27,6 +28,7 @@ namespace AlMualim.Controllers
         }
 
         #region Index
+        [Authorize]
         public async Task<IActionResult> Index(int? surah, int? ruku, int? topic, string searchString)
         {
             // Get Surah and Topics list
