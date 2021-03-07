@@ -1,0 +1,105 @@
+@model IEnumerable<AlMualim.Models.Notes>
+
+@{
+    ViewData["Title"] = "Index";
+    var surah = (List<Surah>)ViewData["Surah"];
+    var topics = (List<Topics>)ViewData["Topics"];
+    var searchParams = (Dictionary<string, object>)ViewData["SearchParams"];
+    var surahParam = (int?)searchParams["Surah"];
+    var rukuParam = (int?)searchParams["Ruku"];
+    var topicParam = (int?)searchParams["Topic"];
+    var searchParam = (string)searchParams["Search"];
+}
+
+<h1>Administration Page</h1>
+
+<div class="search-container">
+    <form method="POST" asp-action="Index" class="search-filters-container">
+        <div class="search-filter-container">
+            <div class="search-filter-text">Surah</div>
+            <select name="surah" class="form-control">
+                <option value="">---</option>
+                @foreach(var s in surah)
+                {
+                    @if((int?)s.ID == surahParam)
+                        {<option value="@s.ID" selected="selected">@s.ToString()</option>}
+                    else
+                        {<option value="@s.ID">@s.ToString()</option>}
+                }
+            </select>
+        </div>
+        <div class="search-filter-container">
+            <div class="search-filter-text">Ruku #</div>
+            <input type="number" name="ruku" class="form-control" min="1" value="@rukuParam"/>
+        </div>
+        <div class="search-filter-container">
+            <div class="search-filter-text">Topics</div>
+            <select name="topic" class="form-control" >
+                <option value="">---</option>
+                @foreach(var t in topics)
+                {
+                    @if((int?)t.ID == topicParam)
+                        {<option value="@t.ID" selected="selected">@t.Title</option>}
+                    else
+                        {<option value="@t.ID">@t.Title</option>}
+                }
+            </select>
+        </div>
+        <div class="search-filter-container">
+            <div class="search-filter-text">Search</div>
+            <input name="searchString" class="form-control" value="@searchParam"/>
+        </div>
+        <div class="form-group" class="search-filter-container">
+            <input type="submit" value="Search" class="btn btn-primary search-btn" />
+        </div>
+    </form>
+</div>
+
+<p>
+    <a asp-action="Add">Add New Notes</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Surah)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Ruku)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Topics)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => surah.FirstOrDefault(s => s.ID == item.Surah).Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Ruku)
+            </td>
+            <td>
+                <p>
+                    @String.Join(',', item.Topics.Select(t => t.Title))
+                </p>
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

@@ -19,7 +19,7 @@ namespace AlMualim.Models
 
         public override string ToString()
         {
-            return $"{Title} - ({Translation})";
+            return $"{Title} ({Translation})";
         }
     }
 }

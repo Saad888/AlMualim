@@ -1,0 +1,191 @@
+@model AlMualim.Models.Notes
+
+@{
+    ViewData["Title"] = "Add New Notes";
+    var surah = (List<Surah>)ViewData["Surah"];
+    var topics = (List<Topics>)ViewData["Topics"];
+    var tagsIn = (string)ViewData["Tags"];
+    var mode = (string)ViewData["ViewMode"];
+    var url = Model != null ? Model.URL : "";
+}
+
+<h1>@mode</h1>
+<h4>Notes</h4>
+<hr />
+<form asp-action=@mode asp-method="Post" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    @* TITLE *@
+    <div class="form-group">
+        <label asp-for="Title" class="control-label"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+
+    @* DESCRIPTION *@
+    <div class="form-group">
+        <label asp-for="Description" class="control-label"></label>
+        <textarea asp-for="Description" class="form-control" cols="50" rows="2"></textarea>
+    </div>
+
+    @* SURAH *@
+    <div class="form-group">
+        <label asp-for="Surah" class="control-label"></label>
+        <select id="surah-select" asp-for="Surah" class="form-control">
+            <option value="">---</option>
+            @foreach(var s in surah)
+            {
+                @if(Model != null && (int?)s.ID == Model.Surah)
+                    {<option value="@s.ID" selected="selected">@s.ID - @s.ToString()</option>}
+                else
+                    {<option value="@s.ID">@s.ID - @s.ToString()</option>}
+            }
+        </select>
+    </div>
+
+    @* RUKU *@
+    <div class="form-group">
+        <label asp-for="Ruku" class="control-label"></label>
+        <input id="ruku-select" asp-for="Ruku" type="number" class="form-control" min="1" />
+    </div>
+
+    @* TOPICS *@
+    <div class="form-group">
+        <label asp-for="Topics" class="control-label"></label><br>
+        <div class="admin-topics-container" style="max-height: 100px; border: 1px solid black; overflow:scroll">
+            @foreach(var topic in topics)
+            {
+                @if(Model != null && Model.Topics != null && Model.Topics.Any(t => t.ID == topic.ID))
+                    {<input type="checkbox" name="selectedTopics" value="@topic.ID" id="selectedTopics" checked/>}
+                else
+                    {<input type="checkbox" name="selectedTopics" value="@topic.ID" id="selectedTopics" />}
+                <label>@topic.Title</label><br>
+            }
+        </div>
+        <div id="topic-add-show" class="btn btn-primary" ><a href="javascript:void(0);" style="color: white">Add Topic</a></div>
+        <div id="topic-delete-show" class="btn btn-primary" ><a href="javascript:void(0);" style="color: white">Delete Topic</a></div>
+        <div id="topic-edit-show" class="btn btn-primary" ><a href="javascript:void(0);" style="color: white">Edit Topic</a></div>
+    </div>
+
+    @* UPLOAD FILE *@
+    <div class="form-group">
+        <label class="control-label">Upload File</label><br>
+        <input type="file" name="notesFile" id="notesFile" accept=".pdf">
+        <span asp-validation-for="URL" class="text-danger"></span>
+        @if(!String.IsNullOrEmpty(url))
+        {
+            <input name="URL" id="URL" value="@url" hidden>
+            <label><a href="@url">Current File</a></label>
+        }
+    </div>
+    
+    @* TAG *@
+    <div class="form-group">
+        <label class="control-label">Tags</label>
+        <input class="form-control" type="text" name="tags" id="tags", value="@tagsIn">
+    </div>
+
+    
+    @* TOPICS ADD *@
+    <div class="admin-topic-mod" id="admin-topics-add" disabled>
+        <label class="control-label">Add Topic</label>
+        <input name="AddTopicText" />
+        <input type="submit" name="submitType" value="Add Topic" class="btn btn-primary" />
+        <div class="btn btn-primary topic-mod-hide" ><a href="javascript:void(0);">Cancel</a></div>
+    </div>
+    
+    @* TOPICS DELETE *@
+    <div class="admin-topic-mod" id="admin-topics-delete" disabled>
+        <label class="control-label">Delete Topic</label>
+        <select name="DeleteTopicId" class="form-control" >
+            @foreach(var t in topics)
+            {<option value="@t.ID">@t.Title</option>}
+        </select>
+        <input type="submit" name="submitType" value="Delete Topic" class="btn btn-primary" />
+        <div class="btn btn-primary topic-mod-hide" ><a href="javascript:void(0);">Cancel</a></div>
+    </div>
+
+    @* TOPICS EDIT *@
+    <div class="admin-topic-mod" id="admin-topics-edit" disabled>
+        <label class="control-label">Edit Topic</label>
+        <select name="EditTopicId" class="form-control" >
+            @foreach(var t in topics)
+            {<option value="@t.ID">@t.Title</option>}
+        </select>
+        <input name="EditTopicText" />
+        <input type="submit" name="submitType" value="Edit Topic" class="btn btn-primary" />
+        <div class="btn btn-primary topic-mod-hide" ><a href="javascript:void(0);">Cancel</a></div>
+    </div>
+
+    
+    @* SUBMIT *@
+    <div class="form-group">
+        <input type="submit" name="submitType" value="@mode Notes" class="btn btn-primary" />
+    </div>
+
+    @* NOTES PREVIEW *@
+    @if(!String.IsNullOrEmpty(url))
+    {
+        <div class="form-group">
+            <embed  src="https://docs.google.com/gview?url=@url&embedded=true" style="width:100%; height:500px;" ></embed>
+        </div>
+    }
+</form>
+
+
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+<script>
+// Enable or Disable Topic Mod Group
+function toggleTopicModGroup(identifier, active)
+{
+    if (active){
+        $(identifier).show();
+    } else {
+        $(identifier).hide();
+    }
+}
+
+$("#topic-add-show").click(function () {
+    toggleTopicModGroup("#admin-topics-add", true);
+});
+$("#topic-delete-show").click(function () {
+    toggleTopicModGroup("#admin-topics-delete", true);
+});
+$("#topic-edit-show").click(function () {
+    toggleTopicModGroup("#admin-topics-edit", true);
+});
+
+$(".topic-mod-hide").click(function () {
+    toggleTopicModGroup(".admin-topic-mod", false);
+})
+
+// Enable or Disale Ruku Display
+function toggleRuku(){
+    var selectedVal = $( "#surah-select option:selected" ).attr("value");
+    $("#ruku-select").prop("disabled", selectedVal === "");
+}
+
+$("#surah-select").change(function () {
+    toggleRuku();
+});
+
+
+$(document).ready(function () {
+    toggleRuku();
+    $(".admin-topic-mod").hide();
+
+    if("@ViewData["TopicModError"]" !== "" ){
+        alert("@ViewData["TopicModError"]");
+    }
+});
+</script>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
