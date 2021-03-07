@@ -24,6 +24,7 @@ namespace AlMualim
                 try
                 {
                     SeedSurahData.Initialize(services);
+                    SeedUserData.Initialize(services).Wait();
                 }
                 catch (Exception ex)
                 {
