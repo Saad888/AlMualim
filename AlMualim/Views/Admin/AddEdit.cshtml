@@ -17,8 +17,8 @@
 
     @* TITLE *@
     <div class="form-group">
-        <label asp-for="Title" class="control-label"></label>
-        <input asp-for="Title" class="form-control" />
+        <label asp-for="Title" class="control-label" style="font-weight:bold"></label>
+        <input asp-for="Title" class="form-control" id="title-input"/>
         <span asp-validation-for="Title" class="text-danger"></span>
     </div>
 
@@ -52,7 +52,7 @@
     @* TOPICS *@
     <div class="form-group">
         <label asp-for="Topics" class="control-label"></label><br>
-        <div class="admin-topics-container" style="max-height: 100px; border: 1px solid black; overflow:scroll">
+        <div class="admin-topics-container">
             @foreach(var topic in topics)
             {
                 @if(Model != null && Model.Topics != null && Model.Topics.Any(t => t.ID == topic.ID))
@@ -69,9 +69,8 @@
 
     @* UPLOAD FILE *@
     <div class="form-group">
-        <label class="control-label">Upload File</label><br>
+        <label class="control-label" style="font-weight:bold">Upload File</label><br>
         <input type="file" name="notesFile" id="notesFile" accept=".pdf">
-        <span asp-validation-for="URL" class="text-danger"></span>
         @if(!String.IsNullOrEmpty(url))
         {
             <input name="URL" id="URL" value="@url" hidden>
@@ -88,55 +87,58 @@
     
     @* TOPICS ADD *@
     <div class="admin-topic-mod" id="admin-topics-add" disabled>
-        <label class="control-label">Add Topic</label>
-        <input name="AddTopicText" />
-        <input type="submit" name="submitType" value="Add Topic" class="btn btn-primary" />
-        <div class="btn btn-primary topic-mod-hide" ><a href="javascript:void(0);">Cancel</a></div>
+        <div class="admin-topic-container">
+            <label class="control-label">Add Topic</label>
+            <input name="AddTopicText" class="text-input"/>
+            <input type="submit" name="submitType" value="Add Topic" class="btn btn-primary" />
+            <div class="btn btn-primary topic-mod-hide" ><a href="javascript:void(0);">Cancel</a></div>
+        </div>
     </div>
     
     @* TOPICS DELETE *@
     <div class="admin-topic-mod" id="admin-topics-delete" disabled>
-        <label class="control-label">Delete Topic</label>
-        <select name="DeleteTopicId" class="form-control" >
-            @foreach(var t in topics)
-            {<option value="@t.ID">@t.Title</option>}
-        </select>
-        <input type="submit" name="submitType" value="Delete Topic" class="btn btn-primary" />
-        <div class="btn btn-primary topic-mod-hide" ><a href="javascript:void(0);">Cancel</a></div>
+        <div class="admin-topic-container">
+            <label class="control-label">Delete Topic</label>
+            <select name="DeleteTopicId" class="form-control" >
+                @foreach(var t in topics)
+                {<option value="@t.ID">@t.Title</option>}
+            </select>
+            <input type="submit" name="submitType" value="Delete Topic" class="btn btn-primary" />
+            <div class="btn btn-primary topic-mod-hide" ><a href="javascript:void(0);">Cancel</a></div>
+        </div>
     </div>
 
     @* TOPICS EDIT *@
     <div class="admin-topic-mod" id="admin-topics-edit" disabled>
-        <label class="control-label">Edit Topic</label>
-        <select name="EditTopicId" class="form-control" >
-            @foreach(var t in topics)
-            {<option value="@t.ID">@t.Title</option>}
-        </select>
-        <input name="EditTopicText" />
-        <input type="submit" name="submitType" value="Edit Topic" class="btn btn-primary" />
-        <div class="btn btn-primary topic-mod-hide" ><a href="javascript:void(0);">Cancel</a></div>
+        <div class="admin-topic-container">
+            <label class="control-label">Edit Topic</label>
+            <select name="EditTopicId" class="form-control" >
+                @foreach(var t in topics)
+                {<option value="@t.ID">@t.Title</option>}
+            </select>
+            <input name="EditTopicText" class="text-input"/>
+            <input type="submit" name="submitType" value="Edit Topic" class="btn btn-primary" />
+            <div class="btn btn-primary topic-mod-hide" ><a href="javascript:void(0);">Cancel</a></div>
+        </div>
     </div>
 
     
     @* SUBMIT *@
     <div class="form-group">
-        <input type="submit" name="submitType" value="@mode Notes" class="btn btn-primary" />
+        <input id="submit-button" type="submit" name="submitType" value="@mode Notes" class="btn btn-primary" disabled/>
     </div>
-
-    @* NOTES PREVIEW *@
-    @if(!String.IsNullOrEmpty(url))
-    {
-        <div class="form-group">
-            <embed  src="https://docs.google.com/gview?url=@url&embedded=true" style="width:100%; height:500px;" ></embed>
-        </div>
-    }
 </form>
-
-
-
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
+@* NOTES PREVIEW *@
+@if(!String.IsNullOrEmpty(url))
+{
+    <div class="form-group">
+        <embed  src="https://docs.google.com/gview?url=@url&embedded=true" style="width:100%; height:500px;" ></embed>
+    </div>
+}
+
 
 <script>
 // Enable or Disable Topic Mod Group
@@ -173,10 +175,25 @@ $("#surah-select").change(function () {
     toggleRuku();
 });
 
+// On change for file input
+$("#notesFile").change(function() {
+    ValidateRequiredInputs();
+});
+
+$("#title-input").on('input',function(e){
+    ValidateRequiredInputs();
+});
+
+function ValidateRequiredInputs(){
+    var isFileSelected = ("@mode" === "Edit") || ($("#notesFile").get(0).files.length === 1);
+    var isTitlePopulated = $("#title-input").val() !== "" ;
+    $("#submit-button").prop('disabled', !(isFileSelected && isTitlePopulated));
+}
 
 $(document).ready(function () {
     toggleRuku();
     $(".admin-topic-mod").hide();
+    ValidateRequiredInputs();
 
     if("@ViewData["TopicModError"]" !== "" ){
         alert("@ViewData["TopicModError"]");

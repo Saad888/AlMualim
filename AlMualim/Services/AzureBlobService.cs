@@ -70,7 +70,7 @@ namespace AlMualim.Services
             // Upload file
             using(var stream = notesFile.OpenReadStream())
             {
-                await blob.UploadAsync(stream);
+                await blob.UploadAsync(stream, true);
             }
 
             // Get URL 
@@ -85,17 +85,18 @@ namespace AlMualim.Services
                 return await UploadNotesAndGetURL(notesFile);
 
             // If provided, try to get the blob
-            var blobName = blobUrl.Replace(NotesContainer.Uri.AbsoluteUri + "/", "");
-            var blob = NotesContainer.GetBlobClient(blobName);
-
-            // If it does not exist, create a new
-            if (!await blob.ExistsAsync())
-                return await UploadNotesAndGetURL(notesFile);
+            var blob = GetBlobFromUrl(blobUrl);
 
             // If it does exist, update the file
             using (var stream = notesFile.OpenReadStream())
-                await blob.UploadAsync(stream);
+                await blob.UploadAsync(stream, true);
             return blob.Uri.AbsoluteUri;
+        }
+
+        public static async Task DeleteBlob(string url)
+        {
+            var blob = GetBlobFromUrl(url);
+            await blob.DeleteIfExistsAsync(Azure.Storage.Blobs.Models.DeleteSnapshotsOption.IncludeSnapshots);
         }
 
         #region Private Methods
@@ -109,11 +110,17 @@ namespace AlMualim.Services
             while (await NotesContainer.GetBlobClient(blobName).ExistsAsync() == true)
             {
                 counter++;
-                blobName = fileName + counter;
+                blobName = fileName.Replace(".pdf", "") + counter + ".pdf";
             }
 
             return blobName;
         } 
+
+        private static BlobClient GetBlobFromUrl(string url)
+        {
+            var name = url.Replace(NotesContainer.Uri.AbsoluteUri + "/", "");
+            return NotesContainer.GetBlobClient(name);
+        }
         #endregion
     }
 }

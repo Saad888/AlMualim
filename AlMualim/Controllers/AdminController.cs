@@ -93,7 +93,7 @@ namespace AlMualim.Controllers
             if(submitType != "Add Notes" && submitType != "Edit Notes")
             {
                 var newId = await ModifyTopics(submitType, topicMod);
-                if (submitType == "Add Topic")
+                if (newId != null && submitType == "Add Topic")
                     selectedTopics.Add((int)newId);
             }
 
@@ -106,6 +106,11 @@ namespace AlMualim.Controllers
             // if save, save
             if (submitType == "Add Notes")
             {
+                // Update save and update dates
+                notes.DateAdded = DateTime.Now;
+                notes.LastUpdated = notes.DateAdded;
+
+                // Update tags
                 notes = await UpdateTags(notes, tags);
 
                 // Upload and get URL
@@ -113,12 +118,9 @@ namespace AlMualim.Controllers
                     notes.URL = await AzureBlobService.UploadNotesAndGetURL(notesFile);
 
                 // Submit if model state is valid
-                if (ModelState.IsValid)
-                {
-                    _context.Add(notes);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
-                } 
+                _context.Add(notes);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             } 
 
             ViewData["Surah"] = surah;
@@ -169,7 +171,7 @@ namespace AlMualim.Controllers
             if(submitType != "Add Notes" && submitType != "Edit Notes")
             {
                 var newId = await ModifyTopics(submitType, topicMod);
-                if (submitType == "Add Topic")
+                if (submitType == "Add Topic" && newId != null)
                     selectedTopics.Add((int)newId);
             }
 
@@ -184,11 +186,8 @@ namespace AlMualim.Controllers
                 notes.LastUpdated = DateTime.Now;
 
                 // Must update model BEFORE making modifying topics and tags
-                if (ModelState.IsValid)
-                {
-                    _context.Update(notes);
-                    await _context.SaveChangesAsync();
-                } 
+                _context.Update(notes);
+                await _context.SaveChangesAsync();
 
                 // Update notes model
                 notes = await _context.Notes.Include(n => n.Topics).Include(n => n.Tags).FirstOrDefaultAsync(n => n.ID == id);
@@ -217,11 +216,65 @@ namespace AlMualim.Controllers
             ViewData["Surah"] = surah;
             ViewData["Topics"] = topics.OrderBy(t => t.Title).ToList();
             ViewData["Tags"] = tags;
-            ViewData["ViewMode"] = "Add";
+            ViewData["ViewMode"] = "Edit";
             return View("AddEdit", notes);
         }
         #endregion
 
+        #region Details
+        // GET: Notes/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var allNotes = await _context.Notes.Include(n => n.Topics).Include(n => n.Tags).ToListAsync();
+            var notes = allNotes.FirstOrDefault(n => n.ID == id);
+
+            if (notes == null)
+            {
+                return NotFound();
+            }
+
+            ViewData["AllTopics"] = _context.Topics.ToList().Select(i => i.Title);
+
+            return View(notes);
+        }
+        #endregion
+
+        #region Delete
+        // GET: Notes/Delete/5
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var notes = await _context.Notes.Include(n => n.Topics).Include(n => n.Tags).FirstOrDefaultAsync(m => m.ID == id);
+            if (notes == null)
+            {
+                return NotFound();
+            }
+
+            return View(notes);
+        }
+
+        // POST: Notes/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var notes = await _context.Notes.FindAsync(id);
+            var url = notes.URL;
+            _context.Notes.Remove(notes);
+            await _context.SaveChangesAsync();
+            await AzureBlobService.DeleteBlob(url);
+            return RedirectToAction(nameof(Index));
+        }
+        #endregion
 
         #region Private Methods
         private async Task<int?> ModifyTopics(string submitType, TopicModification topicMod)

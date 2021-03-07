@@ -1,0 +1,58 @@
+.admin-topic-mod
+{
+    position: fixed;
+    background-color: rgba(0, 0, 0, 0.5);
+    height: 100vh;
+    width: 100vw;
+    top: 0;
+    left: 0;
+    z-index: 100;
+
+    .admin-topic-container
+    {
+        top: calc(50% - 100px);
+        position: relative;
+        margin: auto auto;
+        height: auto;
+        width: 400px;
+        background-color: white;
+        padding: 10px;
+        
+        .control-label
+        {
+            display: block;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        
+        .text-input
+        {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .topic-mod-hide
+        {
+            a{
+                color: white;
+                text-decoration: none;
+            }
+        }
+
+        select 
+        {
+            margin-bottom: 10px;
+        }
+    }
+}
+
+.admin-topics-container
+{
+    max-height: 200px;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    overflow:scroll;
+    padding: 10px;
+    margin-bottom: 10px;
+}
