@@ -10,7 +10,7 @@ namespace AlMualim.Services
 {
     public static class AppSettings
     {
-        public static readonly IConfigurationRoot Config;
+        public static readonly IConfigurationRoot Config; 
 
         static AppSettings()
         {
