@@ -22,8 +22,7 @@ jobs:
         dotnet-version: '5.0.x'
 
     - name: Build with dotnet
-      working-directory: ${{env.DOTNET_ROOT}}/AlMualim
-      run: dotnet build --configuration Release
+      run: dotnet build AlMualim/AlMualim.csproj --configuration Release
 
     - name: dotnet publish
       run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
