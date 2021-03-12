@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using AlMualim.Data;
 using AlMualim.Services;
 using System;
@@ -17,8 +18,9 @@ namespace AlMualim.Models
             try
             {
                 var _context = serviceProdiver.GetService<AlMualimDbContext>();
-                var userName = AppSettings.Get("BaseUserName");
-                var basePassword = AppSettings.Get("BasePassword");
+                var config = serviceProdiver.GetService<IConfiguration>();
+                var userName = config.GetValue<string>("BaseUserName");
+                var basePassword = config.GetValue<string>("BasePassword");
 
                 var user = new IdentityUser
                 {

@@ -11,24 +11,24 @@ using Azure.Storage.Blobs.Models;
 
 namespace AlMualim.Services
 {
-    public static class AzureBlobService
+    public class AzureBlobService : IAzureBlobService
     {
-        private static readonly string ConnectionString;
-        private static readonly BlobContainerClient NotesContainer;
-        private static Random random = new Random();
+        private readonly string ConnectionString;
+        private readonly BlobContainerClient NotesContainer;
+        private Random random = new Random();
 
         private const string CONTAINER_NAME_NOTES = "notes";
 
-        static AzureBlobService()
+        public AzureBlobService(IConfiguration configuration)
         {
             // Get connection string
-            ConnectionString = AppSettings.Config.GetConnectionString("AzureBlobConnectionString");
+            ConnectionString = configuration.GetConnectionString("AzureBlobConnectionString");
 
             // Get Notes Container
             NotesContainer = new BlobContainerClient(ConnectionString, CONTAINER_NAME_NOTES);
         }
 
-        public static async Task<bool> IsBlobUrlReachable(string url)
+        public async Task<bool> IsBlobUrlReachable(string url)
         {
             HttpWebRequest request;
             try
@@ -55,7 +55,7 @@ namespace AlMualim.Services
             }
         }
 
-        public static async Task<string> UploadNotesAndGetURL(IFormFile notesFile)
+        public async Task<string> UploadNotesAndGetURL(IFormFile notesFile)
         {
             var fileName = notesFile.FileName;
             var blobName = await GenerateBlobName(fileName);
@@ -74,7 +74,7 @@ namespace AlMualim.Services
             return blobUrl;
         }
 
-        public static async Task<string> UpdateExistingBlob(IFormFile notesFile, string blobUrl)
+        public async Task<string> UpdateExistingBlob(IFormFile notesFile, string blobUrl)
         {
             // If no URL is provided, treat as brand new
             if (blobUrl == null)
@@ -89,13 +89,13 @@ namespace AlMualim.Services
             return blob.Uri.AbsoluteUri;
         }
 
-        public static async Task DeleteBlob(string url)
+        public async Task DeleteBlob(string url)
         {
             var blob = GetBlobFromUrl(url);
             await blob.DeleteIfExistsAsync(DeleteSnapshotsOption.IncludeSnapshots);
         }
 
-        public static async Task DeleteAllExtraData(List<string> urls)
+        public async Task DeleteAllExtraData(List<string> urls)
         {
             var blobNames = urls.Select(u => GetBlobNameFromUrl(u)).ToHashSet();
             // Run through all blobs
@@ -110,7 +110,7 @@ namespace AlMualim.Services
         }
         
         #region Private Methods
-        private static async Task<string> GenerateBlobName(string inputString)
+        private async Task<string> GenerateBlobName(string inputString)
         {
             string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_.".ToLower();
             var fileName = new String(inputString.ToLower().Replace(" ", "_").Where(c => chars.Contains(c)).ToArray());
@@ -126,13 +126,13 @@ namespace AlMualim.Services
             return blobName;
         } 
 
-        private static BlobClient GetBlobFromUrl(string url)
+        private BlobClient GetBlobFromUrl(string url)
         {
             var name = url.Replace(NotesContainer.Uri.AbsoluteUri + "/", "");
             return NotesContainer.GetBlobClient(name);
         }
 
-        private static string GetBlobNameFromUrl(string url)
+        private string GetBlobNameFromUrl(string url)
         {
             return url.Replace(NotesContainer.Uri.AbsoluteUri + "/", "");
         }

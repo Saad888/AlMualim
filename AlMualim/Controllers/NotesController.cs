@@ -18,11 +18,13 @@ namespace AlMualim.Controllers
 
         private readonly AlMualimDbContext _context;
         private readonly IConfiguration _configuration;
+        private readonly IAzureBlobService _azureBlobService;
 
-        public NotesController(AlMualimDbContext context, IConfiguration config)
+        public NotesController(AlMualimDbContext context, IConfiguration config, IAzureBlobService azureBlobService)
         {
             _context = context;
             _configuration = config;
+            _azureBlobService = azureBlobService;
         }
 
         public async Task<IActionResult> Details(int? id)
@@ -41,7 +43,7 @@ namespace AlMualim.Controllers
             ViewData["Surah"] = await _context.Surah.FirstOrDefaultAsync(s => s.ID == note.Surah);
 
             // Validate URL 
-            var isUrlValid = await AzureBlobService.IsBlobUrlReachable(note.URL);
+            var isUrlValid = await _azureBlobService.IsBlobUrlReachable(note.URL);
             ViewData["IsUrlValid"] = isUrlValid;
 
             // Store data
