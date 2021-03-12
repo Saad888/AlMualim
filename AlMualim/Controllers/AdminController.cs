@@ -20,11 +20,13 @@ namespace AlMualim.Controllers
     public class AdminController : Controller
     {
         private readonly AlMualimDbContext _context;
+        private readonly IAzureBlobService _azureBlobService;
         private const int WEIGHT_LIMIT = 75;
 
-        public AdminController(AlMualimDbContext context)
+        public AdminController(AlMualimDbContext context, IAzureBlobService azureBlobService)
         {
             _context = context;
+            _azureBlobService = azureBlobService;
         }
 
         #region Index
@@ -119,7 +121,7 @@ namespace AlMualim.Controllers
 
                 // Upload and get URL
                 if(notesFile != null)
-                    notes.URL = await AzureBlobService.UploadNotesAndGetURL(notesFile);
+                    notes.URL = await _azureBlobService.UploadNotesAndGetURL(notesFile);
 
                 // Submit if model state is valid
                 _context.Add(notes);
@@ -208,7 +210,7 @@ namespace AlMualim.Controllers
 
                 // Update URL if new file
                 if (notesFile != null)
-                    notes.URL = await AzureBlobService.UpdateExistingBlob(notesFile, notes.URL);
+                    notes.URL = await _azureBlobService.UpdateExistingBlob(notesFile, notes.URL);
 
                 // Update DB
                 _context.Update(notes);
@@ -280,7 +282,7 @@ namespace AlMualim.Controllers
             var url = notes.URL;
             _context.Notes.Remove(notes);
             await _context.SaveChangesAsync();
-            await AzureBlobService.DeleteBlob(url);
+            await _azureBlobService.DeleteBlob(url);
             return RedirectToAction(nameof(Index));
         }
         #endregion
@@ -302,7 +304,7 @@ namespace AlMualim.Controllers
 
             // Delete all blobs not associated with a note
             var allUrls = await _context.Notes.Select(n => n.URL).ToListAsync();
-            await AzureBlobService.DeleteAllExtraData(allUrls);
+            await _azureBlobService.DeleteAllExtraData(allUrls);
 
             return RedirectToAction(nameof(Index));
         }
