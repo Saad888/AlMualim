@@ -11,5 +11,6 @@ namespace AlMualim.Models
         [Required]
         public string Title {get; set;}
         public List<Notes> Notes {get; set;}
+        public int Order {get; set;}
     }
 }
