@@ -36,7 +36,7 @@ namespace AlMualim.Controllers
         }
 
         // GET: Surah/Notes/{slug}
-        public async Task<IActionResult> Notes(string slug)
+        public IActionResult Notes(string slug)
         {
             // if Slug is empty, return to Index
             if (String.IsNullOrEmpty(slug))

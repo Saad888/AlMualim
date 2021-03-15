@@ -9,7 +9,7 @@ namespace AlMualim.Models
 {
     public class SurahJsonCollection
     {
-        List<SurahJson> chapters {get; set;}
+        public List<SurahJson> chapters {get; set;}
 
         public Dictionary<int, Surah> ToSurah() 
         {

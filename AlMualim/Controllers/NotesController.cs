@@ -40,7 +40,7 @@ namespace AlMualim.Controllers
                 return NotFound();
 
             // Get topics and surah
-            ViewData["Surah"] = Surah.List().FirstOrDefault(s => s.ID == note.Surah);
+            if (note.Surah != null) ViewData["Surah"] = Surah.AllSurah[(int)note.Surah];
 
             // Validate URL 
             var isUrlValid = await _azureBlobService.IsBlobUrlReachable(note.URL);
