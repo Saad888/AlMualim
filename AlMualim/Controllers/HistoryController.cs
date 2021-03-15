@@ -26,7 +26,7 @@ namespace AlMualim.Controllers
         public async Task<IActionResult> Index()
         {
             var notes = await _context.Notes.Where(n => n.IsHistory == true).OrderBy(n => n.HistoryOrder).ToListAsync();
-            ViewData["Surah"] = await _context.Surah.ToListAsync();
+            ViewData["Surah"] = Surah.List();
             return View(notes);
         }
     }

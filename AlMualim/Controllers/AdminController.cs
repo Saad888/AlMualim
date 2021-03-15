@@ -34,7 +34,7 @@ namespace AlMualim.Controllers
         public async Task<IActionResult> Index(int? surah, int? ruku, int? topic, string searchString)
         {
             // Get Surah and Topics list
-            var surahs = await _context.Surah.ToListAsync(); 
+            var surahs = Surah.List(); 
             var topics = await _context.Topics.ToListAsync();
             ViewData["Surah"] = surahs;
             ViewData["Topics"] = topics;
@@ -78,7 +78,7 @@ namespace AlMualim.Controllers
         [Authorize]
         public async Task<IActionResult> Add()
         {
-            ViewData["Surah"] = await _context.Surah.ToListAsync();
+            ViewData["Surah"] = Surah.List();
             ViewData["Topics"] = await _context.Topics.OrderByDescending(t => t.Order).ToListAsync();
             ViewData["Stories"] = await _context.Stories.OrderByDescending(s => s.Order).ToListAsync();
             ViewData["ViewMode"] = "Add";
@@ -105,7 +105,7 @@ namespace AlMualim.Controllers
                     selectedTopics.Add((int)newId);
             }
 
-            var surah = await _context.Surah.ToListAsync();
+            var surah = Surah.List();
             var topics = await _context.Topics.ToListAsync();
             var stories = await _context.Stories.ToListAsync();
 
@@ -161,7 +161,7 @@ namespace AlMualim.Controllers
                 tagsList = String.Join(" ", notes.Tags.Select(t => t.Title).ToList());
             }
         
-            ViewData["Surah"] = await _context.Surah.ToListAsync();
+            ViewData["Surah"] = Surah.List();
             ViewData["Topics"] = await _context.Topics.OrderByDescending(t => t.Order).ToListAsync();
             ViewData["Stories"] = await _context.Stories.OrderByDescending(s => s.Order).ToListAsync();
             ViewData["ViewMode"] = "Edit";
@@ -192,7 +192,7 @@ namespace AlMualim.Controllers
                     selectedTopics.Add((int)newId);
             }
 
-            var surah = await _context.Surah.ToListAsync();
+            var surah = Surah.List();
             var topics = await _context.Topics.ToListAsync();
             var stories = await _context.Stories.ToListAsync();
 

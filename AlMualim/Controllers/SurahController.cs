@@ -24,7 +24,7 @@ namespace AlMualim.Controllers
         public async Task<IActionResult> Index()
         {
             // Get surah and notes list
-            var surahList = await _context.Surah.ToListAsync();
+            var surahList = Surah.List();
             var notesList = await _context.Notes.ToListAsync();
             
             // Get list of surahs IDs that have notes
@@ -43,7 +43,7 @@ namespace AlMualim.Controllers
                 return RedirectToAction("Index");
 
             // Get surah 
-            var surah = await _context.Surah.FirstOrDefaultAsync(s => s.Slug == slug);
+            var surah = Surah.List().FirstOrDefault(s => s.Slug == slug);
             if (surah == null)
                 return NotFound();
 
