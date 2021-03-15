@@ -11,5 +11,6 @@ namespace AlMualim.Data
         public DbSet<AlMualim.Models.Topics> Topics { get; set; }
         public DbSet<AlMualim.Models.Surah> Surah { get; set; }
         public DbSet<AlMualim.Models.Tags> Tags {get; set;}
+        public DbSet<AlMualim.Models.Stories> Stories {get; set;}
     }
 }

@@ -79,7 +79,8 @@ namespace AlMualim.Controllers
         public async Task<IActionResult> Add()
         {
             ViewData["Surah"] = await _context.Surah.ToListAsync();
-            ViewData["Topics"] = await _context.Topics.ToListAsync();
+            ViewData["Topics"] = await _context.Topics.OrderByDescending(t => t.Order).ToListAsync();
+            ViewData["Stories"] = await _context.Stories.OrderByDescending(s => s.Order).ToListAsync();
             ViewData["ViewMode"] = "Add";
             return View("AddEdit");
         }
@@ -90,24 +91,29 @@ namespace AlMualim.Controllers
         [Authorize]
         public async Task<IActionResult> Add(string submitType, 
                                              ICollection<int> selectedTopics, 
+                                             int selectedStory,
                                              IFormFile notesFile,
                                              string tags,
-                                             [Bind("ID,Title,Description,Surah,Ruku,URL,DateAdded,LastUpdated")] Notes notes, 
-                                             [Bind("AddTopicText, DeleteTopicId, EditTopicId, EditTopicText")] TopicModification topicMod)
+                                             [Bind("ID,Title,Description,Surah,Ruku,URL,DateAdded,LastUpdated,IsHistory")] Notes notes, 
+                                             [Bind("AddTopicText, DeleteTopicId, EditTopicId, EditTopicText, OrderTopicList, AddStoryText, DeleteStoryId, EditStoryId, EditStoryText, OrderProphetsList")] TopicStoryModification mod)
         {
             // Verify action type
             if(submitType != "Add Notes" && submitType != "Edit Notes")
             {
-                var newId = await ModifyTopics(submitType, topicMod);
+                var newId = await ModifyStoriesAndTopics(submitType, mod);
                 if (newId != null && submitType == "Add Topic")
                     selectedTopics.Add((int)newId);
             }
 
             var surah = await _context.Surah.ToListAsync();
             var topics = await _context.Topics.ToListAsync();
+            var stories = await _context.Stories.ToListAsync();
 
             // Update topics
             notes.Topics = topics.Where(t => selectedTopics.Contains(t.ID)).ToList();
+
+            // Update story
+            notes.Story = stories.FirstOrDefault(s => s.ID == selectedStory);
 
             // if save, save
             if (submitType == "Add Notes")
@@ -130,7 +136,8 @@ namespace AlMualim.Controllers
             } 
 
             ViewData["Surah"] = surah;
-            ViewData["Topics"] = topics.OrderBy(t => t.Title).ToList();
+            ViewData["Topics"] = topics.OrderByDescending(t => t.Order).ToList();
+            ViewData["Stories"] = stories.OrderByDescending(s => s.Order).ToList();
             ViewData["Tags"] = tags;
             ViewData["ViewMode"] = "Add";
             return View("AddEdit", notes);
@@ -155,7 +162,8 @@ namespace AlMualim.Controllers
             }
         
             ViewData["Surah"] = await _context.Surah.ToListAsync();
-            ViewData["Topics"] = await _context.Topics.ToListAsync();
+            ViewData["Topics"] = await _context.Topics.OrderByDescending(t => t.Order).ToListAsync();
+            ViewData["Stories"] = await _context.Stories.OrderByDescending(s => s.Order).ToListAsync();
             ViewData["ViewMode"] = "Edit";
             ViewData["Tags"] = tagsList;
             return View("AddEdit", notes);
@@ -167,10 +175,11 @@ namespace AlMualim.Controllers
         public async Task<IActionResult> Edit(int? id,
                                              string submitType, 
                                              ICollection<int> selectedTopics, 
+                                             int selectedStory,
                                              IFormFile notesFile,
                                              string tags,
-                                             [Bind("ID,Title,Description,Surah,Ruku,URL,DateAdded,LastUpdated,Topics,Tags")] Notes notes, 
-                                             [Bind("AddTopicText, DeleteTopicId, EditTopicId, EditTopicText")] TopicModification topicMod)
+                                             [Bind("ID,Title,Description,Surah,Ruku,URL,DateAdded,LastUpdated,Topics,Tags,IsHistory")] Notes notes, 
+                                             [Bind("AddTopicText, DeleteTopicId, EditTopicId, EditTopicText, OrderTopicList, AddStoryText, DeleteStoryId, EditStoryId, EditStoryText, OrderProphetsList")] TopicStoryModification mod)
         {
             if (id != notes.ID)
                 return NotFound();
@@ -178,13 +187,14 @@ namespace AlMualim.Controllers
             // Verify action type
             if(submitType != "Add Notes" && submitType != "Edit Notes")
             {
-                var newId = await ModifyTopics(submitType, topicMod);
+                var newId = await ModifyStoriesAndTopics(submitType, mod);
                 if (submitType == "Add Topic" && newId != null)
                     selectedTopics.Add((int)newId);
             }
 
             var surah = await _context.Surah.ToListAsync();
             var topics = await _context.Topics.ToListAsync();
+            var stories = await _context.Stories.ToListAsync();
 
 
             // if save, save
@@ -212,6 +222,9 @@ namespace AlMualim.Controllers
                 if (notesFile != null)
                     notes.URL = await _azureBlobService.UpdateExistingBlob(notesFile, notes.URL);
 
+                // Update story
+                notes.Story = stories.FirstOrDefault(s => s.ID == selectedStory);
+
                 // Update DB
                 _context.Update(notes);
                 await _context.SaveChangesAsync();
@@ -222,7 +235,8 @@ namespace AlMualim.Controllers
             // Update topics
             notes.Topics = topics.Where(t => selectedTopics.Contains(t.ID)).ToList();
             ViewData["Surah"] = surah;
-            ViewData["Topics"] = topics.OrderBy(t => t.Title).ToList();
+            ViewData["Topics"] = topics.OrderByDescending(t => t.Order).ToList();
+            ViewData["Stories"] = stories.OrderByDescending(s => s.Order).ToList();
             ViewData["Tags"] = tags;
             ViewData["ViewMode"] = "Edit";
             return View("AddEdit", notes);
@@ -311,7 +325,8 @@ namespace AlMualim.Controllers
         #endregion
 
         #region Private Methods
-        private async Task<int?> ModifyTopics(string submitType, TopicModification topicMod)
+
+        private async Task<int?> ModifyStoriesAndTopics(string submitType, TopicStoryModification topicMod)
         {
             switch(submitType)
             {
@@ -381,6 +396,112 @@ namespace AlMualim.Controllers
                     targetTopic.Title = editTopicText;
                     await _context.SaveChangesAsync();
                     break;
+
+                case "Reorder Topics":
+                    var reorderText = topicMod.OrderTopicList;
+                    if (String.IsNullOrEmpty(reorderText))
+                        break;
+
+                    var orderList = reorderText.Split(",").Select(t => Convert.ToInt32(t)).ToList();
+                    var allTopics = await _context.Topics.ToListAsync();
+
+                    var orderIndex = orderList.Count();
+                    for(int i = 0; i < orderList.Count(); i++)
+                    {
+                        orderIndex--;
+                        var topicId = orderList[i];
+                        var t = allTopics.FirstOrDefault(t => t.ID == topicId);
+                        if (t != null)
+                            t.Order = orderIndex;
+                    }
+                    
+                    await _context.SaveChangesAsync();
+                    break;
+
+                case "Add Prophet":
+                    var newStoryText = topicMod.AddStoryText;
+                    // If no text, ignore
+                    if (String.IsNullOrEmpty(newStoryText))
+                    {
+                        ViewData["TopicModError"] = $"No name was given for the new Story!";
+                        break;
+                    }
+                    // If topic already exists, ignore
+                    if (await _context.Stories.AnyAsync(s => s.Prophet.ToLower() == newStoryText.ToLower()))
+                    {
+                        ViewData["TopicModError"] = $"{newStoryText} already exists!";
+                        break;
+                    }
+
+                    // Add topics to DB
+                    var newStory = new Stories() {Prophet = newStoryText};
+                    await _context.Stories.AddAsync(newStory);
+                    await _context.SaveChangesAsync();
+                    break;
+
+                case "Delete Prophet":
+                    // Find Topic
+                    var deleteStoryId = topicMod.DeleteStoryId;
+                    var story = await _context.Stories.FirstOrDefaultAsync(t => t.ID == deleteStoryId);
+
+                    // If not found, error
+                    if (story == null)
+                    {
+                        ViewData["TopicModError"] = $"The story could not be found!";
+                        break;
+                    }
+
+                    // Remove it
+                    _context.Stories.Remove(story);
+                    await _context.SaveChangesAsync();
+                    break;
+
+                case "Edit Prophet":
+                    var editStoryId = topicMod.EditStoryId;
+                    var editStoryText = topicMod.EditStoryText;
+
+                    // If no text, ignore
+                    if (String.IsNullOrEmpty(editStoryText))
+                    {
+                        ViewData["TopicModError"] = $"No name was given for the new story!";
+                        break;
+                    }
+                    // Make sure text isn't duplicate
+                    if (await _context.Stories.AnyAsync(t => t.Prophet.ToLower() == editStoryText.ToLower()))
+                    {
+                        ViewData["TopicModError"] = $"{editStoryText} already exists!";
+                        break;
+                    }
+
+                    // Get topic
+                    var targetStory = await _context.Stories.FirstOrDefaultAsync(t => t.ID == editStoryId);
+
+                    // Modify topic and save
+                    targetStory.Prophet = editStoryText;
+                    await _context.SaveChangesAsync();
+                    break;
+
+                case "Reorder Prophets":
+                    var reorderProphetText = topicMod.OrderProphetsList;
+                    if (String.IsNullOrEmpty(reorderProphetText))
+                        break;
+
+                    var orderStoryList = reorderProphetText.Split(",").Select(t => Convert.ToInt32(t)).ToList();
+                    var allStories = await _context.Stories.ToListAsync();
+
+                    var orderStoryIndex = orderStoryList.Count();
+                    for(int i = 0; i < orderStoryList.Count(); i++)
+                    {
+                        orderStoryIndex--;
+                        var storyId = orderStoryList[i];
+                        var s = allStories.FirstOrDefault(t => t.ID == storyId);
+                        if (s != null)
+                            s.Order = orderStoryIndex;
+                    }
+                    
+                    await _context.SaveChangesAsync();
+                    break;
+
                 default:
                     break;
             }
@@ -437,11 +558,18 @@ namespace AlMualim.Controllers
         #endregion
     }
 
-    public class TopicModification
+    public class TopicStoryModification
     {
         public string AddTopicText {get; set;}
         public int DeleteTopicId {get; set;}
         public int EditTopicId {get; set;}
         public string EditTopicText {get; set;}
+        public string OrderTopicList {get; set;}
+
+        public string AddStoryText {get; set;}
+        public int DeleteStoryId {get; set;}
+        public int EditStoryId {get; set;}
+        public string EditStoryText {get; set;}
+        public string OrderProphetsList {get; set;}
     }
 }

@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AlMualim.Migrations
 {
     [DbContext(typeof(AlMualimDbContext))]
-    [Migration("20210314040651_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20210314195005_story")]
+    partial class story
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -34,10 +34,22 @@ namespace AlMualim.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("HistoryOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsHistory")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("LastUpdated")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("Ruku")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("StoryID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StoryOrder")
                         .HasColumnType("int");
 
                     b.Property<int?>("Surah")
@@ -54,7 +66,29 @@ namespace AlMualim.Migrations
 
                     b.HasKey("ID");
 
+                    b.HasIndex("StoryID");
+
                     b.ToTable("Notes");
+                });
+
+            modelBuilder.Entity("AlMualim.Models.Stories", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Prophet")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Stories");
                 });
 
             modelBuilder.Entity("AlMualim.Models.Surah", b =>
@@ -345,6 +379,15 @@ namespace AlMualim.Migrations
                     b.ToTable("NotesTopics");
                 });
 
+            modelBuilder.Entity("AlMualim.Models.Notes", b =>
+                {
+                    b.HasOne("AlMualim.Models.Stories", "Story")
+                        .WithMany("Notes")
+                        .HasForeignKey("StoryID");
+
+                    b.Navigation("Story");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -424,6 +467,11 @@ namespace AlMualim.Migrations
                         .HasForeignKey("TopicsID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("AlMualim.Models.Stories", b =>
+                {
+                    b.Navigation("Notes");
                 });
 #pragma warning restore 612, 618
         }

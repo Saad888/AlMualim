@@ -4,6 +4,7 @@
     ViewData["Title"] = "Add New Notes";
     var surah = (List<Surah>)ViewData["Surah"];
     var topics = (List<Topics>)ViewData["Topics"];
+    var stories = (List<Stories>)ViewData["Stories"];
     var tagsIn = (string)ViewData["Tags"];
     var mode = (string)ViewData["ViewMode"];
     var url = Model != null ? Model.URL : "";
@@ -49,6 +50,32 @@
         <input id="ruku-select" asp-for="Ruku" type="number" class="form-control" min="1" />
     </div>
 
+    @* History *@
+    <div class="form-group">
+        <label class="control-label">Are these notes on Islamic History?</label>
+        <input asp-for="IsHistory" type="checkbox" />
+    </div>
+
+
+    @* Stories of the Prophets *@
+    <div class="form-group">
+        <label class="control-label">Stories of the Prophets</label><br>
+        <div class="admin-topics-container">
+            @foreach(var story in stories)
+            {
+                @if(Model != null && Model.Story != null && Model.Story == story)
+                    {<input type="radio" name="selectedStory" value="@story.ID" id="selectedStory" checked/>}
+                else
+                    {<input type="radio" name="selectedStory" value="@story.ID" id="selectedStory" />}
+                <label>@story.Prophet</label><br>
+            }
+        </div>
+        <div id="story-add-show" class="btn btn-primary" ><a href="javascript:void(0);" style="color: white">Add Prophet</a></div>
+        <div id="story-delete-show" class="btn btn-primary" ><a href="javascript:void(0);" style="color: white">Delete Prophet</a></div>
+        <div id="story-edit-show" class="btn btn-primary" ><a href="javascript:void(0);" style="color: white">Edit Prophet</a></div>
+        <div id="story-reorder-show" class="btn btn-primary" ><a href="javascript:void(0);" style="color: white">Reorder Prophets</a></div>
+    </div>
+
     @* TOPICS *@
     <div class="form-group">
         <label asp-for="Topics" class="control-label"></label><br>
@@ -56,15 +83,16 @@
             @foreach(var topic in topics)
             {
                 @if(Model != null && Model.Topics != null && Model.Topics.Any(t => t.ID == topic.ID))
-                    {<input type="checkbox" name="selectedTopics" value="@topic.ID" id="selectedTopics" checked/>}
+                    {<input type="checkbox" name="selectedTopics" value="@topic.ID" id="selectedTopics" checked class="topics-list"/>}
                 else
-                    {<input type="checkbox" name="selectedTopics" value="@topic.ID" id="selectedTopics" />}
+                    {<input type="checkbox" name="selectedTopics" value="@topic.ID" id="selectedTopics" class="topics-list"/>}
                 <label>@topic.Title</label><br>
             }
         </div>
         <div id="topic-add-show" class="btn btn-primary" ><a href="javascript:void(0);" style="color: white">Add Topic</a></div>
         <div id="topic-delete-show" class="btn btn-primary" ><a href="javascript:void(0);" style="color: white">Delete Topic</a></div>
         <div id="topic-edit-show" class="btn btn-primary" ><a href="javascript:void(0);" style="color: white">Edit Topic</a></div>
+        <div id="topic-reorder-show" class="btn btn-primary" ><a href="javascript:void(0);" style="color: white">Reorder Topics</a></div>
     </div>
 
     @* UPLOAD FILE *@
@@ -122,6 +150,74 @@
         </div>
     </div>
 
+    @* TOPICS REORDER *@
+    <div class="admin-topic-mod" id="admin-topics-reorder" disabled>
+        <div class="admin-topic-container">
+            <label class="control-label">Reorder Topic</label>
+            <ul class="reorderable" id="topics-reorder-list" data-inputid="order-topics-list">
+                @foreach(var t in topics)
+                {<li data-modelid="@t.ID">@t.Title</li>}
+            </ul>
+            <input id="order-topics-list" name="OrderTopicList" style="visibility: hidden; position: absolute;" />
+            <input type="submit" name="submitType" value="Reorder Topics" class="btn btn-primary" />
+            <div class="btn btn-primary topic-mod-hide" ><a href="javascript:void(0);">Cancel</a></div>
+        </div>
+    </div>
+
+
+
+    @* STORIES ADD *@
+    <div class="admin-topic-mod" id="admin-story-add" disabled>
+        <div class="admin-topic-container">
+            <label class="control-label">Add Prophet</label>
+            <input name="AddStoryText" class="text-input"/>
+            <input type="submit" name="submitType" value="Add Prophet" class="btn btn-primary" />
+            <div class="btn btn-primary topic-mod-hide" ><a href="javascript:void(0);">Cancel</a></div>
+        </div>
+    </div>
+    
+    @* STORIES DELETE *@
+    <div class="admin-topic-mod" id="admin-story-delete" disabled>
+        <div class="admin-topic-container">
+            <label class="control-label">Delete Prophet</label>
+            <select name="DeleteStoryId" class="form-control" >
+                @foreach(var s in stories)
+                {<option value="@s.ID">@s.Prophet</option>}
+            </select>
+            <input type="submit" name="submitType" value="Delete Prophet" class="btn btn-primary" />
+            <div class="btn btn-primary topic-mod-hide" ><a href="javascript:void(0);">Cancel</a></div>
+        </div>
+    </div>
+
+    @* STORIES EDIT *@
+    <div class="admin-topic-mod" id="admin-story-edit" disabled>
+        <div class="admin-topic-container">
+            <label class="control-label">Edit Prophet</label>
+            <select name="EditStoryId" class="form-control" >
+                @foreach(var s in stories)
+                {<option value="@s.ID">@s.Prophet</option>}
+            </select>
+            <input name="EditStoryText" class="text-input"/>
+            <input type="submit" name="submitType" value="Edit Prophet" class="btn btn-primary" />
+            <div class="btn btn-primary topic-mod-hide" ><a href="javascript:void(0);">Cancel</a></div>
+        </div>
+    </div>
+
+    
+    @* STORIES REORDER *@
+    <div class="admin-topic-mod" id="admin-story-reorder" disabled>
+        <div class="admin-topic-container">
+            <label class="control-label">Reorder Stories of the Prophets</label>
+            <ul class="reorderable" id="propets-reorder-list" data-inputid="order-prophets-list">
+                @foreach(var s in stories)
+                {<li data-modelid="@s.ID">@s.Prophet</li>}
+            </ul>
+            <input id="order-prophets-list" name="OrderProphetsList" style="visibility: hidden; position: absolute;" />
+            <input type="submit" name="submitType" value="Reorder Prophets" class="btn btn-primary" />
+            <div class="btn btn-primary topic-mod-hide" ><a href="javascript:void(0);">Cancel</a></div>
+        </div>
+    </div>
+
     
     @* SUBMIT *@
     <div class="form-group">
@@ -140,6 +236,7 @@
 }
 
 
+<script src="~/js/jquery-sortable.js"></script>
 <script>
 // Enable or Disable Topic Mod Group
 function toggleTopicModGroup(identifier, active)
@@ -159,6 +256,23 @@ $("#topic-delete-show").click(function () {
 });
 $("#topic-edit-show").click(function () {
     toggleTopicModGroup("#admin-topics-edit", true);
+});
+$("#topic-reorder-show").click(function () {
+    toggleTopicModGroup("#admin-topics-reorder", true);
+});
+
+
+$("#story-add-show").click(function () {
+    toggleTopicModGroup("#admin-story-add", true);
+});
+$("#story-delete-show").click(function () {
+    toggleTopicModGroup("#admin-story-delete", true);
+});
+$("#story-edit-show").click(function () {
+    toggleTopicModGroup("#admin-story-edit", true);
+});
+$("#story-reorder-show").click(function () {
+    toggleTopicModGroup("#admin-story-reorder", true);
 });
 
 $(".topic-mod-hide").click(function () {
@@ -190,6 +304,19 @@ function ValidateRequiredInputs(){
     $("#submit-button").prop('disabled', !(isFileSelected && isTitlePopulated));
 }
 
+var afterSortCallback = function ($item, container, _super, event) {
+  $item.removeClass(container.group.options.draggedClass).removeAttr("style");
+  $("body").removeClass(container.group.options.bodyClass);
+  var parent = $item.parent();
+  var list = $(parent).children();
+  var ids = list.map(function() {
+      return $(this).data("modelid");
+  }).toArray();
+  var input = "#" + parent.data("inputid");
+  $(input).val(ids.join(","));
+}
+
+
 $(document).ready(function () {
     toggleRuku();
     $(".admin-topic-mod").hide();
@@ -198,6 +325,10 @@ $(document).ready(function () {
     if("@ViewData["TopicModError"]" !== "" ){
         alert("@ViewData["TopicModError"]");
     }
+
+    $("ul.reorderable").sortable({
+        onDrop: afterSortCallback
+    });
 });
 </script>
 
