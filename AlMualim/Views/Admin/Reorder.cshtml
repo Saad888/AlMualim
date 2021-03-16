@@ -1,0 +1,51 @@
+@model IEnumerable<AlMualim.Models.Notes>
+
+@{
+    ViewData["Title"] = "Reorder";
+    var mode = (string)ViewData["Mode"];
+    var title = (string)ViewData["Header"];
+    var surah = (List<Surah>)ViewData["Surah"];
+}
+
+<h1>@title</h1>
+
+<form asp-action="Reorder" asp-method="POST" asp-route-mode="@mode">
+    <ul class="reorderable expanded">
+    @foreach(var note in Model)
+    {
+        @if (note.Surah != null)
+        {
+            <li class="list-item" data-noteid="@note.ID">@note.Title (@surah.First(s => s.ID == note.Surah).Title)</li>
+        }
+        else
+        {
+            <li class="list-item" data-noteid="@note.ID">@note.Title</li>
+        }
+    }
+    </ul>
+    <input id="order-input" name="OrderText" style="visibility: hidden; position: absolute;" />
+    <div class="form-group">
+        <input id="submit-button" type="submit" value="Save" class="btn btn-primary" />
+    </div>
+</form>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+<script src="~/js/jquery-sortable.js"></script>
+<script>
+    var afterSortCallback = function ($item, container, _super, event) {
+        $item.removeClass(container.group.options.draggedClass).removeAttr("style");
+        $("body").removeClass(container.group.options.bodyClass);
+        var parent = $item.parent();
+        var list = $(parent).children();
+        var ids = list.map(function() {
+            return $(this).data("noteid");
+        }).toArray();
+        $("#order-input").val(ids.join(","));
+    }
+    
+    $("ul.reorderable").sortable({
+        onDrop: afterSortCallback
+    });
+</script>

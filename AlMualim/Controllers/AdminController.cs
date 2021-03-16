@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using AlMualim.Data;
 using AlMualim.Models;
@@ -21,12 +23,14 @@ namespace AlMualim.Controllers
     {
         private readonly AlMualimDbContext _context;
         private readonly IAzureBlobService _azureBlobService;
+        private readonly IConfiguration _configuration;
         private const int WEIGHT_LIMIT = 75;
 
-        public AdminController(AlMualimDbContext context, IAzureBlobService azureBlobService)
+        public AdminController(AlMualimDbContext context, IAzureBlobService azureBlobService, IConfiguration configuration)
         {
             _context = context;
             _azureBlobService = azureBlobService;
+            _configuration = configuration;
         }
 
         #region Index
@@ -70,6 +74,8 @@ namespace AlMualim.Controllers
                 notes = weightedNotesList.Select(w => w.Note).ToList();
             }
 
+            // Add Prophets list
+            ViewData["Stories"] = await _context.Stories.Include(s => s.Notes).Where(s => s.Notes.Count() > 0).OrderByDescending(s => s.Order).ToListAsync();
             return View(notes);
         }
         #endregion
@@ -324,8 +330,84 @@ namespace AlMualim.Controllers
         }
         #endregion
 
-        #region Private Methods
+        #region Reorder
+        [Authorize]
+        public async Task<IActionResult> Reorder(string mode, int? storyid)
+        {
+            ViewData["Surah"] = Surah.List();
+            ViewData["Mode"] = mode;
 
+            if (mode == "History")
+            {
+                var historyNotes = await _context.Notes.Where(n => n.IsHistory == true).OrderByDescending(n => n.HistoryOrder).ToListAsync();
+                ViewData["Header"] = "Reorder History Notes";
+                return View(historyNotes);
+            }
+            else if (mode == "Prophet")
+            {
+                if(storyid == null)
+                    return RedirectToAction("Index");
+                
+                var prophet = await _context.Stories.Include(s => s.Notes).FirstOrDefaultAsync(p => p.ID == storyid);
+                if(prophet == null)
+                    return RedirectToAction("Index");
+
+                ViewData["Header"] = "Reorder Notes for " + prophet.Prophet;
+                return View(prophet.Notes.OrderByDescending(n => n.StoryOrder));
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        [Authorize]
+        [HttpPost, ActionName("Reorder")]
+        public async Task<IActionResult> Reorder(string mode, int? storyid, string OrderText)
+        {
+            if (String.IsNullOrEmpty(mode) || String.IsNullOrEmpty(OrderText))
+                return RedirectToAction("Index");
+
+            var notes = await _context.Notes.ToListAsync();
+            
+            var idList = OrderText.Split(",").Select(c => Convert.ToInt32(c)).ToList();
+            var index = idList.Count();
+            foreach(var id in idList)
+            {
+                index--;
+                var targetNote = notes.FirstOrDefault(n => n.ID == id);
+                if (targetNote != null)
+                {
+                    if(mode == "History")
+                    {
+                        targetNote.HistoryOrder = index;
+                    }
+                    else if(mode == "Prophet")
+                    {
+                        targetNote.StoryOrder = index;
+                    }
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+        #endregion
+
+        #region Password Reset
+        [Authorize]
+        public async Task<IActionResult> ResetPassword(string password)
+        {
+            var username = _configuration.GetValue<string>("BaseUserName");
+            var user = await _context.Users.FirstOrDefaultAsync(c => c.Email == username);
+            var hasher = new PasswordHasher<IdentityUser>();
+            var hashed = hasher.HashPassword(user, password);
+            user.PasswordHash = hashed;
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index");
+        }
+        #endregion
+
+        #region Private Methods
         private async Task<int?> ModifyStoriesAndTopics(string submitType, TopicStoryModification topicMod)
         {
             switch(submitType)

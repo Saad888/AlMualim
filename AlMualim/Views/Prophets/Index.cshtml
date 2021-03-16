@@ -1,0 +1,17 @@
+@model IEnumerable<AlMualim.Models.Stories>
+
+@{
+    ViewData["Title"] = "Stories of the Prophets";
+}
+
+<h1>Stories of the Prophet</h1>
+<div class="generic-notes-container">
+    @foreach (var story in Model)
+    {
+        <div class="generic-note-container">
+            <a asp-action="Notes" asp-route-id="@story.ID" class="link-box"></a>
+            <div class="generic-note-text">@story.Prophet</div>
+            <div class="generic-note-arrow">></div>
+        </div>
+    }
+</div>
