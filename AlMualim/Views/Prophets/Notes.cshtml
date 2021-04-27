@@ -1,0 +1,26 @@
+@model IEnumerable<AlMualim.Models.Notes>
+
+@{
+    var story = (Stories)ViewData["Story"];
+    var surah = (List<Surah>)ViewData["Surah"];
+    ViewData["Title"] = story.Prophet;
+}
+
+<h1>@story.Prophet</h1>
+<div class="generic-notes-container">
+    @foreach (var note in Model)
+    {
+        <div class="generic-note-container">
+            <a asp-controller="Notes" asp-action="Details" asp-route-id="@note.ID" class="link-box"></a>
+            @if (note.Surah != null)
+            {
+                <div class="generic-note-text"> - @note.Title (@surah.First(s => s.ID == note.Surah).Title)</div>
+            }
+            else
+            {
+                <div class="generic-note-text"> - @note.Title</div>
+            }
+            <div class="generic-note-arrow">></div>
+        </div>
+    }
+</div>

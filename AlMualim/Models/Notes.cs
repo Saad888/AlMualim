@@ -19,7 +19,13 @@ namespace AlMualim.Models
         public DateTime DateAdded {get; set;}
         public DateTime LastUpdated {get; set;}
         public List<Topics> Topics {get; set;}
+        public Stories Story {get; set;}
+        public int StoryOrder {get; set;}
+        public bool IsHistory {get; set;}
+        public int HistoryOrder {get; set;}
         public List<Tags> Tags {get; set;}
+
+
 
         public string GetSearchString(Surah surah = null)
         {

@@ -9,6 +9,7 @@
     var rukuParam = (int?)searchParams["Ruku"];
     var topicParam = (int?)searchParams["Topic"];
     var searchParam = (string)searchParams["Search"];
+    var storiesList = (List<Stories>)ViewData["Stories"];
 }
 
 <h1>Administration Page</h1>
@@ -57,8 +58,37 @@
 
 <p>
     <a asp-action="Add">Add New Notes</a> | 
+    <a asp-action="Reorder" asp-route-mode="History">Reorder History Notes</a> | 
+    <a id="reorder-stories-activate" href=javascript:void(0);>Reorder Prophets Notes</a> | 
+    <a id="password-activate" href=javascript:void(0);>Change Admin Password</a> | 
     <a asp-action="Cleanup">Cleanup Database</a>
 </p>
+
+<div id="reorder-stories-container" class="hidable-menu">
+    <form id="reorder-form" asp-action="Reorder" method="GET" class="hidable-core">
+        <label class="control-label">Select the Prophet...</label><br>
+        <select name="storyid" class="form-control" id="storiesSelection">
+            @foreach(var story in storiesList)
+            {<option value="@story.ID" data-storyid="@story.ID">@story.Prophet</option>}
+        </select>
+        <input name="mode" value="Prophet" style="visibility: hidden; position: absolute;" />
+        <input id="submit-button" type="submit" value="Reorder Notes" class="btn btn-primary" />
+        <a class="btn btn-primary" href=javascript:void(0); id="reorder-stories-deactivate">Cancel</a>
+    </form>
+</div>
+
+
+<div id="password-container" class="hidable-menu">
+    <form class="hidable-core" asp-action="ResetPassword" method="GET">
+        <label class="control-label">Enter your password (At least 6 characters):</label><br>
+        <input type="password" class="form-control password-entry" id="password-entry-a" name="password" />
+        <label class="control-label">Confirm your password:</label><br>
+        <input type="password" class="form-control password-entry" id="password-entry-b" />
+        <label class="control-label" id="password-warning" style="color: red">Passwords do not match!</label><br>
+        <input id="password-submit-button" type="submit" value="Change Password" class="btn btn-primary" />
+        <a class="btn btn-primary" href=javascript:void(0); id="password-deactivate">Cancel</a>
+    </form>
+</div>
 
 <table class="table">
     <thead>
@@ -104,3 +134,41 @@
 }
     </tbody>
 </table>
+
+<script>
+    $("#reorder-stories-activate").click(() => {
+        $("#reorder-stories-container").show();
+    });
+    
+    $("#reorder-stories-deactivate").click(() => {
+        $("#reorder-stories-container").hide();
+    });
+
+    $("#password-activate").click(() => {
+        $("#password-container").show();
+    });
+    
+    $("#password-deactivate").click(() => {
+        $("#password-container").hide();
+    });
+
+    $(".password-entry").change(() =>
+    {
+        var valA = $("#password-entry-a").val()
+        var valB = $("#password-entry-b").val()
+        if (valA != valB || valA.length < 6){
+            $("#password-submit-button").prop("disabled", true);
+            $("#password-warning").show();
+        } else {
+            $("#password-submit-button").prop("disabled", false);
+            $("#password-warning").hide();
+        }
+    });
+
+    $(document).ready(() => {
+        $("#reorder-stories-container").hide();
+        $("#password-container").hide();
+        $("#password-warning").hide();
+        $("#password-submit-button").prop("disabled", true);
+    });
+</script>

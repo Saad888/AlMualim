@@ -26,7 +26,7 @@ namespace AlMualim.Controllers
         public async Task<IActionResult> Index(int? surah, int? ruku, int? topic, string searchString)
         {
             // Get Surah and Topics list
-            var surahs = await _context.Surah.ToListAsync(); 
+            var surahs = Surah.List(); 
             var topics = await _context.Topics.ToListAsync();
             ViewData["Surah"] = surahs;
             ViewData["Topics"] = topics;

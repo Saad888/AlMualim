@@ -36,7 +36,7 @@ namespace AlMualim.Controllers
             ViewData["Topic"] = topic;
 
             // Get surah metadata
-            var surah = await _context.Surah.ToListAsync();
+            var surah = Surah.List();
             ViewData["Surah"] = surah;
 
             // Filter notes by 
