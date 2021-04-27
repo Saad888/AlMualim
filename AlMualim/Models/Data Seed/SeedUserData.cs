@@ -22,6 +22,9 @@ namespace AlMualim.Models
                 var userName = config.GetValue<string>("BaseUserName");
                 var basePassword = config.GetValue<string>("BasePassword");
 
+                var adminName = config.GetValue<string>("AdminUserName");
+                var adminPassword = config.GetValue<string>("AdminPassword");
+
                 var user = new IdentityUser
                 {
                     UserName = userName,
@@ -33,21 +36,41 @@ namespace AlMualim.Models
                     SecurityStamp = Guid.NewGuid().ToString()
                 };
 
+                var admin = new IdentityUser
+                {
+                    UserName = adminName,
+                    NormalizedUserName = adminName,
+                    Email = adminName,
+                    NormalizedEmail = adminName,
+                    EmailConfirmed = true,
+                    LockoutEnabled = false,
+                    SecurityStamp = Guid.NewGuid().ToString()
+                };
+
                 var roleStore = new RoleStore<IdentityRole>(_context);
 
                 if (!_context.Roles.Any(r => r.Name == "admin"))
                 {
                     await roleStore.CreateAsync(new IdentityRole { Name = "admin", NormalizedName = "admin" });
                 }
-
+                
+                var userStore = new UserStore<IdentityUser>(_context);
                 if (!_context.Users.Any(u => u.UserName == user.UserName))
                 {
                     var password = new PasswordHasher<IdentityUser>();
                     var hashed = password.HashPassword(user, basePassword);
                     user.PasswordHash = hashed;
-                    var userStore = new UserStore<IdentityUser>(_context);
                     await userStore.CreateAsync(user);
                     await userStore.AddToRoleAsync(user, "admin");
+                }
+
+                if (!_context.Users.Any(u => u.UserName == admin.UserName))
+                {
+                    var password = new PasswordHasher<IdentityUser>();
+                    var hashed = password.HashPassword(admin, adminPassword);
+                    admin.PasswordHash = hashed;
+                    await userStore.CreateAsync(admin);
+                    await userStore.AddToRoleAsync(admin, "admin");
                 }
 
                 await _context.SaveChangesAsync();

@@ -36,6 +36,10 @@ namespace AlMualim.Models
                 Topics.ForEach(t => searchString += t.Title + " ");
             if (Tags != null)
                 Tags.ForEach(t => searchString += t.Title + " ");
+            if (IsHistory)
+                searchString += " Islamic History ";
+            if (Story != null)
+                searchString += "Stories of the Prophet " + Story.Prophet;
 
             return searchString.ToLower();
         }

@@ -1,31 +1,57 @@
 /* NAVIGATION CSS */
+.nav-spacer{
+    height: 75px;
+    margin-bottom: 3rem;
+}
+
 .navigation{
     //Positioning
-    height: 100px;
-    margin: 0;
+    height: 75px;
+    margin: 0 0 2rem 0;
     width: 100%;
+    z-index: 100;
+    position: absolute;
+    top: 0;
+    right: 0;
 
     // Display
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    background-color: rgba(0, 11, 2, 0.75);
+
+    .nav-logo{
+        height: 100%;
+        width: 150px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .nav-icon{
+            height: 40px;
+            width: 75px;
+            background-image: url(../img/icon.svg);
+            background-repeat: no-repeat;
+            background-size: contain;
+        }
+    }
 
     .nav-container{
         // Positioning
-        height: 50px;
-        width: 600px;
-        margin: auto auto;
+        height: 100%;
+        margin: auto 0 auto auto;
 
         // Display:
-        display: flex;
-        justify-content: space-between;
+        display: grid;
+        grid-auto-flow: column;
 
         .nav-selection{
             height: 100%;
-            width: 120px;
+            width: 125px;
             margin: 0;
 
             position: relative;
-            background-color: rgb(3, 95, 0);
+            background-color: transparent;
 
             transition: background-color 0.25s;
 
@@ -41,15 +67,19 @@
                 margin: 0;
 
                 // Text
-                line-height: 50px;
-                font-size: 16px;
-                text-align: center;
+                font-family: @font-std;
+                line-height: 75px;
+                font-size: 23px;
                 font-weight: bold;
-                color: white;
+                text-align: center;
+                background: radial-gradient(#CFFFB8, #FFD951);
+                background-clip: text;
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
             }
 
             &:hover{
-                background-color: rgb(4, 128, 0);
+                background-color: rgba(0, 11, 2, 0.75);
             }
         }
     }
