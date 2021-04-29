@@ -7,10 +7,18 @@
 </div>
 
 <div class="wt-wrapper">
-    <div class="wt wt-main"><span class="radial-text">Al Mualim</span></div>
-    <div class="wt wt-subtext"><span class="radial-text">Tafseer and Islamic History</span></div>
-    <div class="wt-min-wrapper">
+    <div class="wt wt-main" style="display:none;"><span class="radial-text">Al Mualim</span></div>
+    <div class="wt wt-subtext" style="display:none;"><span class="radial-text">Tafseer and Islamic History</span></div>
+    <div class="wt-min-wrapper" style="display:none;">
         <a class="wt-sub" href="#"><span>Subscribe</span></a>
         <div class="wt wt-author"><span class="radial-text">By Uzma Jabeen</span></div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function(){
+        $('.wt-main').delay(100).fadeIn(1500);
+        $('.wt-subtext').delay(400).fadeIn(1500);
+        $('.wt-min-wrapper').delay(700).fadeIn(1500);
+    });
+</script>

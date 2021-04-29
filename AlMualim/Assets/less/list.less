@@ -1,16 +1,16 @@
 @bg-color-main: #001E0A;
 @bg-color-main-alt: #00240c;
 @bg-color-main-hover: #001407;
-@bg-color-sub: s;
-@bg-color-sub-alt: s;
-@bg-color-sub-hover: s;
+@bg-color-sub: #001106;
+@bg-color-sub-alt: #020e05;
+@bg-color-sub-hover: #000000;
 
 @font-color-std: #FFFA8D;
 
 .list-container{
     list-style: none;
     color: @font-color-std;
-    font-size: 24px;
+    font-size: 30px;
     line-height: 100%;
     font-family: @font-std;
 
@@ -23,10 +23,10 @@
 
     .list-main{
         position: relative;
-        background-color: @bg-color-main;
         display: grid;
         grid-auto-flow: column;
         height: 60px;
+        background-color: @bg-color-main;
         transition: background-color @anim-std;
 
         &:nth-child(odd){
@@ -37,12 +37,28 @@
             background-color: @bg-color-main-hover;
         }
     }
+    
+    .list-generic{
+        grid-template-columns: 1fr 100px;
+        padding-left: 1rem;
+    }
 
     .list-sub{
         position: relative;
         display: grid;
         grid-auto-flow: column;
         height: 40px;
+        background-color: @bg-color-sub;
+        transition: background-color @anim-std;
+        font-size: 20px;
+
+        &:nth-child(odd){
+            background-color: @bg-color-sub-alt;
+        }
+
+        &:hover{
+            background-color: @bg-color-sub-hover;
+        }
     }
 
     .list-sub-item{
@@ -58,5 +74,26 @@
         background-position: right;
         width: 100%;
         margin-right: 1rem;
+    }
+
+    .list-arrow-down{
+        height: 25%;
+        background: url("../img/list-arrow-down.svg") no-repeat;
+        background-size: contain;
+        background-position: right;
+        width: 100%;
+        margin-right: 1rem;
+    }
+
+    .list-header{
+        display: grid;
+        grid-template-columns: 1fr auto;
+
+        h1.arabic-text{
+            display: flex;
+            align-items: flex-end;
+            font-size: 60px;
+            line-height: 30px;
+        }
     }
 }

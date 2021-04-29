@@ -6,43 +6,46 @@
 }
 
 
-<div class="list-container">
-    <h1>@surah.ToString()</h1>
+<ul class="list-container container px-0">
+    <div class="list-header">
+        <h1>@surah.ToString()</h1>
+        <h1 class="arabic-text"><span>@surah.Arabic</span></h1>
+    </div>
     @foreach (var ruku in (List<int?>)ViewData["RukuList"])
     {
-        <div class="ruku-section">
-            <div class="list-main">
+        <div>
+            <li class="list-main ruku-display list-generic">
                 <a href="javascript:void(0)" class="link-box"></a>
                 @if (ruku == null)
                 {
-                    <div class="ruku-text">General</div>
+                    <div class="list-sub-item">General</div>
                 } 
                 else
                 {
-                    <div class="ruku-text">Ruku @ruku</div>
+                    <div class="list-sub-item">Ruku @ruku</div>
                 }
-                <div class="ruku-arrow">V</div>
-            </div>
-            <div class="ruku-subsection">
+                <div class="list-sub-item"><i class="list-arrow-down"></i></div>
+            </li>
+            <li class="ruku-subsection" style="display:none">
                 @foreach (var note in Model.Where(n => n.Ruku == ruku))
                 {
-                    <div class="list-sub">
+                    <div class="list-sub list-generic">
                         <a asp-controller="Notes" asp-action="Details" asp-route-id="@note.ID" class="link-box"></a>
-                        <div class=""> - @note.Title</div>
-                        <div class="">></div>
+                        <div class="list-sub-item"> @note.Title</div>
+                        <div class="list-sub-item"><i class="list-arrow"></i></div>
                     </div>
                 }
-            </div>
+            </li>
         </div>
     }
-</div>
+</ul>
 
 <script>
     $(document).ready(function()
     {
         $(".ruku-display").click(function()
         {
-            $(this).parent().toggleClass("active");
+            $(this).parent().find(".ruku-subsection").slideToggle(250);
         });
     });
 </script>

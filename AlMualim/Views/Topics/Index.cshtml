@@ -4,14 +4,14 @@
     ViewData["Title"] = "Topics";
 }
 
-<h1>Topics</h1>
-<div class="topic-container">
+<ul class="list-container container px-0">
+    <h1>Topics</h1>
     @foreach (var item in Model)
     {
-        <div class="topic">
+        <li class="list-main list-generic">
             <a asp-action="Notes" asp-route-id="@item.ID" class="link-box"></a> 
-            <div class="topic-description">@item.Title</div>
-            <div class="topic-arrow">></div>
-        </div>
+            <div class="list-sub-item">@item.Title</div>
+            <div class="list-sub-item"><i class="list-arrow"></i></div>
+        </li>
     }
-</div>
+</ul>
