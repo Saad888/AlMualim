@@ -5,21 +5,21 @@
     var surah = (List<Surah>)ViewData["Surah"];
 }
 
-<h1>Islamic History</h1>
-<div class="generic-notes-container">
+<div class="list-container">
+    <h1>Islamic History</h1>
     @foreach (var note in Model)
     {
-        <div class="generic-note-container">
+        <div class="list-main">
             <a asp-controller="Notes" asp-action="Details" asp-route-id="@note.ID" class="link-box"></a>
             @if (note.Surah != null)
             {
-                <div class="generic-note-text"> - @note.Title (@surah.First(s => s.ID == note.Surah).Title)</div>
+                <div class=""> - @note.Title (@surah.First(s => s.ID == note.Surah).Title)</div>
             }
             else
             {
-                <div class="generic-note-text"> - @note.Title</div>
+                <div class=""> - @note.Title</div>
             }
-            <div class="generic-note-arrow">></div>
+            <div class="">></div>
         </div>
     }
 </div>

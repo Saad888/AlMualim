@@ -1,0 +1,62 @@
+@bg-color-main: #001E0A;
+@bg-color-main-alt: #00240c;
+@bg-color-main-hover: #001407;
+@bg-color-sub: s;
+@bg-color-sub-alt: s;
+@bg-color-sub-hover: s;
+
+@font-color-std: #FFFA8D;
+
+.list-container{
+    list-style: none;
+    color: @font-color-std;
+    font-size: 24px;
+    line-height: 100%;
+    font-family: @font-std;
+
+    h1{
+        line-height: 50px;
+        font-size: 40px;
+        font-family: @font-std;
+        font-weight: 400;
+    }
+
+    .list-main{
+        position: relative;
+        background-color: @bg-color-main;
+        display: grid;
+        grid-auto-flow: column;
+        height: 60px;
+        transition: background-color @anim-std;
+
+        &:nth-child(odd){
+            background-color: @bg-color-main-alt;
+        }
+
+        &:hover{
+            background-color: @bg-color-main-hover;
+        }
+    }
+
+    .list-sub{
+        position: relative;
+        display: grid;
+        grid-auto-flow: column;
+        height: 40px;
+    }
+
+    .list-sub-item{
+        height: 100%;
+        display: flex;
+        align-items: center;
+    }
+
+    .list-arrow{
+        height: 50%;
+        background: url("../img/list-arrow-right.svg") no-repeat;
+        background-size: contain;
+        background-position: right;
+        width: 100%;
+        margin-right: 1rem;
+    }
+}

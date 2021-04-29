@@ -4,15 +4,16 @@
     ViewData["Title"] = "Surah";
 }
 
-<h1>Notes By Surah</h1>
-<div class="surah-container">
+<ul class="list-container container px-0">
+    <h1 class="radial-text">Notes By Surah</h1>
     @foreach (var item in Model)
     {
-        <div class="surah">
+        <li class="list-main surah-list">
             <a asp-action="Notes" asp-route-slug="@item.Slug" class="link-box"></a> 
-            <div class="surah-number">@item.ID</div>
-            <div class="surah-text">@item.ToString()</div>
-            <div class="surah-arrow">></div>
-        </div>
+            <div class="list-sub-item surah-number radial-text"><span>@item.ID</span></div>
+            <div class="list-sub-item">@item.ToString()</div>
+            <div class="list-sub-item surah-arabic"><span>@item.Arabic</span></div>
+            <div class="list-sub-item"><i class="list-arrow"></i></div>
+        </li>
     }
-</div>
+</ul>

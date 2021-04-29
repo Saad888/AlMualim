@@ -4,14 +4,14 @@
     ViewData["Title"] = "Stories of the Prophets";
 }
 
-<h1>Stories of the Prophet</h1>
-<div class="generic-notes-container">
+<div class="list-container container">
+    <h1>Stories of the Prophet</h1>
     @foreach (var story in Model)
     {
-        <div class="generic-note-container">
+        <div class="list-main">
             <a asp-action="Notes" asp-route-id="@story.ID" class="link-box"></a>
-            <div class="generic-note-text">@story.Prophet</div>
-            <div class="generic-note-arrow">></div>
+            <div class="">@story.Prophet</div>
+            <div class="">></div>
         </div>
     }
 </div>
