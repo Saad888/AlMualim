@@ -154,6 +154,8 @@
         $("#password-warning").hide();
         $("#password-submit-button").prop("disabled", true);
 
-        $("#primary-table").DataTable();
+        $("#primary-table").DataTable({
+            responsive: true
+        });
     });
 </script>

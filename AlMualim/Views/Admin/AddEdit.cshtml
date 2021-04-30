@@ -10,330 +10,394 @@
     var url = Model != null ? Model.URL : "";
 }
 
-<h1>@mode</h1>
-<h4>Notes</h4>
-<hr />
-<form asp-action=@mode asp-method="Post" enctype="multipart/form-data">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="jumbotron py-2 add-edit-section">
+    <h1>@mode Notes</h1>
+    <hr />
+    <form asp-action=@mode asp-method="Post" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-    @* TITLE *@
-    <div class="form-group">
-        <label asp-for="Title" class="control-label" style="font-weight:bold"></label>
-        <input asp-for="Title" class="form-control" id="title-input"/>
-        <span asp-validation-for="Title" class="text-danger"></span>
-    </div>
-
-    @* DESCRIPTION *@
-    <div class="form-group">
-        <label asp-for="Description" class="control-label"></label>
-        <textarea asp-for="Description" class="form-control" cols="50" rows="2"></textarea>
-    </div>
-
-    @* SURAH *@
-    <div class="form-group">
-        <label asp-for="Surah" class="control-label"></label>
-        <select id="surah-select" asp-for="Surah" class="form-control">
-            <option value="">---</option>
-            @foreach(var s in surah)
-            {
-                @if(Model != null && (int?)s.ID == Model.Surah)
-                    {<option value="@s.ID" selected="selected">@s.ID - @s.ToString()</option>}
-                else
-                    {<option value="@s.ID">@s.ID - @s.ToString()</option>}
-            }
-        </select>
-    </div>
-
-    @* RUKU *@
-    <div class="form-group">
-        <label asp-for="Ruku" class="control-label"></label>
-        <input id="ruku-select" asp-for="Ruku" type="number" class="form-control" min="1" />
-    </div>
-
-    @* History *@
-    <div class="form-group">
-        <label class="control-label">Are these notes on Islamic History?</label>
-        <input asp-for="IsHistory" type="checkbox" />
-    </div>
-
-
-    @* Stories of the Prophets *@
-    <div class="form-group">
-        <label class="control-label">Stories of the Prophets</label><br>
-        <div class="admin-topics-container">
-            @foreach(var story in stories)
-            {
-                @if(Model != null && Model.Story != null && Model.Story == story)
-                    {<input type="radio" name="selectedStory" value="@story.ID" id="selectedStory" checked/>}
-                else
-                    {<input type="radio" name="selectedStory" value="@story.ID" id="selectedStory" />}
-                <label>@story.Prophet</label><br>
-            }
+        @* TITLE *@
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">Title</span>
+            </div>
+            <input type="text" class="form-control" asp-for="Title" id="title-input" required>
         </div>
-        <div id="story-add-show" class="btn btn-primary" ><a href="javascript:void(0);" style="color: white">Add Prophet</a></div>
-        <div id="story-delete-show" class="btn btn-primary" ><a href="javascript:void(0);" style="color: white">Delete Prophet</a></div>
-        <div id="story-edit-show" class="btn btn-primary" ><a href="javascript:void(0);" style="color: white">Edit Prophet</a></div>
-        <div id="story-reorder-show" class="btn btn-primary" ><a href="javascript:void(0);" style="color: white">Reorder Prophets</a></div>
-    </div>
 
-    @* TOPICS *@
-    <div class="form-group">
-        <label asp-for="Topics" class="control-label"></label><br>
-        <div class="admin-topics-container">
-            @foreach(var topic in topics)
-            {
-                @if(Model != null && Model.Topics != null && Model.Topics.Any(t => t.ID == topic.ID))
-                    {<input type="checkbox" name="selectedTopics" value="@topic.ID" id="selectedTopics" checked class="topics-list"/>}
-                else
-                    {<input type="checkbox" name="selectedTopics" value="@topic.ID" id="selectedTopics" class="topics-list"/>}
-                <label>@topic.Title</label><br>
-            }
+        @* DESCRIPTION *@
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">Description</span>
+            </div>
+            <textarea asp-for="Description" class="form-control" cols="50" rows="2"></textarea>
         </div>
-        <div id="topic-add-show" class="btn btn-primary" ><a href="javascript:void(0);" style="color: white">Add Topic</a></div>
-        <div id="topic-delete-show" class="btn btn-primary" ><a href="javascript:void(0);" style="color: white">Delete Topic</a></div>
-        <div id="topic-edit-show" class="btn btn-primary" ><a href="javascript:void(0);" style="color: white">Edit Topic</a></div>
-        <div id="topic-reorder-show" class="btn btn-primary" ><a href="javascript:void(0);" style="color: white">Reorder Topics</a></div>
-    </div>
+        <hr />
 
-    @* UPLOAD FILE *@
-    <div class="form-group">
-        <label class="control-label" style="font-weight:bold">Upload File</label><br>
-        <input type="file" name="notesFile" id="notesFile" accept=".pdf">
-        @if(!String.IsNullOrEmpty(url))
+        @* SURAH *@
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="surah-select">Surah</label>
+            </div>
+            <select class="custom-select" id="surah-select" asp-for="Surah">
+                <option value="">None</option>
+                @foreach (var s in surah)
+                {
+                    @if (Model != null && (int?)s.ID == Model.Surah)
+                    {
+                        <option value="@s.ID" selected>@s.ID - @s.ToString()</option>
+                    }
+                    else
+                    {
+                        <option value="@s.ID">@s.ID - @s.ToString()</option>
+                    }
+                }
+            </select>
+        </div>
+
+        @* RUKU *@
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">Ruku</span>
+            </div>
+            <input id="ruku-select" asp-for="Ruku" type="number" class="form-control" min="1" />
+        </div>
+        <hr />
+
+        @* History *@
+        <div class="form-group">
+            <label class="control-label">Are these notes on Islamic History?</label>
+            <input asp-for="IsHistory" type="checkbox" />
+        </div>
+
+
+        @* Stories of the Prophets *@
+        <div class="form-group entity-list">
+            <label class="control-label">Stories of the Prophets</label><br>
+            <div class="admin-topics-container">
+                @foreach (var story in stories)
+                {
+                    @if (Model != null && Model.Story != null && Model.Story == story)
+                    {
+                        <input type="radio" name="selectedStory" value="@story.ID" id="selectedStory" checked />
+                    }
+                    else
+                    {
+                        <input type="radio" name="selectedStory" value="@story.ID" id="selectedStory" />
+                    }
+                    <label>@story.Prophet</label><br>
+                }
+            </div>
+            <div id="story-add-show" class="btn btn-primary"><a href="javascript:void(0);" style="color: white">Add</a>
+            </div>
+            <div id="story-delete-show" class="btn btn-primary"><a href="javascript:void(0);"
+                    style="color: white">Delete</a></div>
+            <div id="story-edit-show" class="btn btn-primary"><a href="javascript:void(0);"
+                    style="color: white">Edit</a></div>
+            <div id="story-reorder-show" class="btn btn-primary"><a href="javascript:void(0);"
+                    style="color: white">Reorder</a></div>
+        </div>
+
+        @* TOPICS *@
+        <div class="form-group entity-list">
+            <label asp-for="Topics" class="control-label"></label><br>
+            <div class="admin-topics-container">
+                @foreach (var topic in topics)
+                {
+                    @if (Model != null && Model.Topics != null && Model.Topics.Any(t => t.ID == topic.ID))
+                    {
+                        <input type="checkbox" name="selectedTopics" value="@topic.ID" id="selectedTopics" checked
+                    class="topics-list" />
+                    }
+                    else
+                    {
+                        <input type="checkbox" name="selectedTopics" value="@topic.ID" id="selectedTopics"
+                    class="topics-list" />
+                    }
+                    <label>@topic.Title</label><br>
+                }
+            </div>
+            <div id="topic-add-show" class="btn btn-primary"><a href="javascript:void(0);" style="color: white">Add</a>
+            </div>
+            <div id="topic-delete-show" class="btn btn-primary"><a href="javascript:void(0);"
+                    style="color: white">Delete</a></div>
+            <div id="topic-edit-show" class="btn btn-primary"><a href="javascript:void(0);"
+                    style="color: white">Edit</a></div>
+            <div id="topic-reorder-show" class="btn btn-primary"><a href="javascript:void(0);"
+                    style="color: white">Reorder</a></div>
+        </div>
+
+        <hr />
+
+        @* Tags *@
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">Tags</span>
+            </div>
+            <input class="form-control" type="text" name="tags" id="tags" , value="@tagsIn">
+        </div>
+
+        @* File Input *@
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroupFileAddon01">Upload Notes</span>
+            </div>
+            <div class="custom-file">
+                <input type="file" name="notesFile" class="custom-file-input" id="notesFile" accept=".pdf" aria-describedby="inputGroupFileAddon01">
+                <label class="custom-file-label" for="notesFile">Choose file</label>
+            </div>
+        </div>
+
+        @if (!String.IsNullOrEmpty(url))
         {
             <input name="URL" id="URL" value="@url" hidden>
-            <label><a href="@url">Current File</a></label>
+            <a href="@url">Current File On Record</a>
         }
-    </div>
-    
-    @* TAG *@
-    <div class="form-group">
-        <label class="control-label">Tags</label>
-        <input class="form-control" type="text" name="tags" id="tags", value="@tagsIn">
-    </div>
 
-    
-    @* TOPICS ADD *@
-    <div class="admin-topic-mod" id="admin-topics-add" disabled>
-        <div class="admin-topic-container">
-            <label class="control-label">Add Topic</label>
-            <input name="AddTopicText" class="text-input"/>
-            <input type="submit" name="submitType" value="Add Topic" class="btn btn-primary" />
-            <div class="btn btn-primary topic-mod-hide" ><a href="javascript:void(0);">Cancel</a></div>
+
+        @* TOPICS ADD *@
+        <div class="admin-topic-mod" id="admin-topics-add" disabled>
+            <div class="admin-topic-container">
+                <label class="control-label">Add Topic</label>
+                <input name="AddTopicText" class="text-input" />
+                <input type="submit" name="submitType" value="Add Topic" class="btn btn-primary" />
+                <div class="btn btn-primary topic-mod-hide"><a href="javascript:void(0);">Cancel</a></div>
+            </div>
         </div>
-    </div>
-    
-    @* TOPICS DELETE *@
-    <div class="admin-topic-mod" id="admin-topics-delete" disabled>
-        <div class="admin-topic-container">
-            <label class="control-label">Delete Topic</label>
-            <select name="DeleteTopicId" class="form-control" >
-                @foreach(var t in topics)
-                {<option value="@t.ID">@t.Title</option>}
-            </select>
-            <input type="submit" name="submitType" value="Delete Topic" class="btn btn-primary" />
-            <div class="btn btn-primary topic-mod-hide" ><a href="javascript:void(0);">Cancel</a></div>
+
+        @* TOPICS DELETE *@
+        <div class="admin-topic-mod" id="admin-topics-delete" disabled>
+            <div class="admin-topic-container">
+                <label class="control-label">Delete Topic</label>
+                <select name="DeleteTopicId" class="form-control">
+                    @foreach (var t in topics)
+                    {
+                        <option value="@t.ID">@t.Title</option>
+                    }
+                </select>
+                <input type="submit" name="submitType" value="Delete Topic" class="btn btn-primary" />
+                <div class="btn btn-primary topic-mod-hide"><a href="javascript:void(0);">Cancel</a></div>
+            </div>
         </div>
-    </div>
 
-    @* TOPICS EDIT *@
-    <div class="admin-topic-mod" id="admin-topics-edit" disabled>
-        <div class="admin-topic-container">
-            <label class="control-label">Edit Topic</label>
-            <select name="EditTopicId" class="form-control" >
-                @foreach(var t in topics)
-                {<option value="@t.ID">@t.Title</option>}
-            </select>
-            <input name="EditTopicText" class="text-input"/>
-            <input type="submit" name="submitType" value="Edit Topic" class="btn btn-primary" />
-            <div class="btn btn-primary topic-mod-hide" ><a href="javascript:void(0);">Cancel</a></div>
+        @* TOPICS EDIT *@
+        <div class="admin-topic-mod" id="admin-topics-edit" disabled>
+            <div class="admin-topic-container">
+                <label class="control-label">Edit Topic</label>
+                <select name="EditTopicId" class="form-control">
+                    @foreach (var t in topics)
+                    {
+                        <option value="@t.ID">@t.Title</option>
+                    }
+                </select>
+                <input name="EditTopicText" class="text-input" />
+                <input type="submit" name="submitType" value="Edit Topic" class="btn btn-primary" />
+                <div class="btn btn-primary topic-mod-hide"><a href="javascript:void(0);">Cancel</a></div>
+            </div>
         </div>
-    </div>
 
-    @* TOPICS REORDER *@
-    <div class="admin-topic-mod" id="admin-topics-reorder" disabled>
-        <div class="admin-topic-container">
-            <label class="control-label">Reorder Topic</label>
-            <ul class="reorderable" id="topics-reorder-list" data-inputid="order-topics-list">
-                @foreach(var t in topics)
-                {<li data-modelid="@t.ID">@t.Title</li>}
-            </ul>
-            <input id="order-topics-list" name="OrderTopicList" style="visibility: hidden; position: absolute;" />
-            <input type="submit" name="submitType" value="Reorder Topics" class="btn btn-primary" />
-            <div class="btn btn-primary topic-mod-hide" ><a href="javascript:void(0);">Cancel</a></div>
+        @* TOPICS REORDER *@
+        <div class="admin-topic-mod" id="admin-topics-reorder" disabled>
+            <div class="admin-topic-container">
+                <label class="control-label">Reorder Topic</label>
+                <ul class="reorderable" id="topics-reorder-list" data-inputid="order-topics-list">
+                    @foreach (var t in topics)
+                    {
+                        <li data-modelid="@t.ID">@t.Title</li>
+                    }
+                </ul>
+                <input id="order-topics-list" name="OrderTopicList" style="visibility: hidden; position: absolute;" />
+                <input type="submit" name="submitType" value="Reorder Topics" class="btn btn-primary" />
+                <div class="btn btn-primary topic-mod-hide"><a href="javascript:void(0);">Cancel</a></div>
+            </div>
         </div>
-    </div>
 
 
 
-    @* STORIES ADD *@
-    <div class="admin-topic-mod" id="admin-story-add" disabled>
-        <div class="admin-topic-container">
-            <label class="control-label">Add Prophet</label>
-            <input name="AddStoryText" class="text-input"/>
-            <input type="submit" name="submitType" value="Add Prophet" class="btn btn-primary" />
-            <div class="btn btn-primary topic-mod-hide" ><a href="javascript:void(0);">Cancel</a></div>
+        @* STORIES ADD *@
+        <div class="admin-topic-mod" id="admin-story-add" disabled>
+            <div class="admin-topic-container">
+                <label class="control-label">Add Prophet</label>
+                <input name="AddStoryText" class="text-input" />
+                <input type="submit" name="submitType" value="Add Prophet" class="btn btn-primary" />
+                <div class="btn btn-primary topic-mod-hide"><a href="javascript:void(0);">Cancel</a></div>
+            </div>
         </div>
-    </div>
-    
-    @* STORIES DELETE *@
-    <div class="admin-topic-mod" id="admin-story-delete" disabled>
-        <div class="admin-topic-container">
-            <label class="control-label">Delete Prophet</label>
-            <select name="DeleteStoryId" class="form-control" >
-                @foreach(var s in stories)
-                {<option value="@s.ID">@s.Prophet</option>}
-            </select>
-            <input type="submit" name="submitType" value="Delete Prophet" class="btn btn-primary" />
-            <div class="btn btn-primary topic-mod-hide" ><a href="javascript:void(0);">Cancel</a></div>
-        </div>
-    </div>
 
-    @* STORIES EDIT *@
-    <div class="admin-topic-mod" id="admin-story-edit" disabled>
-        <div class="admin-topic-container">
-            <label class="control-label">Edit Prophet</label>
-            <select name="EditStoryId" class="form-control" >
-                @foreach(var s in stories)
-                {<option value="@s.ID">@s.Prophet</option>}
-            </select>
-            <input name="EditStoryText" class="text-input"/>
-            <input type="submit" name="submitType" value="Edit Prophet" class="btn btn-primary" />
-            <div class="btn btn-primary topic-mod-hide" ><a href="javascript:void(0);">Cancel</a></div>
+        @* STORIES DELETE *@
+        <div class="admin-topic-mod" id="admin-story-delete" disabled>
+            <div class="admin-topic-container">
+                <label class="control-label">Delete Prophet</label>
+                <select name="DeleteStoryId" class="form-control">
+                    @foreach (var s in stories)
+                    {
+                        <option value="@s.ID">@s.Prophet</option>
+                    }
+                </select>
+                <input type="submit" name="submitType" value="Delete Prophet" class="btn btn-primary" />
+                <div class="btn btn-primary topic-mod-hide"><a href="javascript:void(0);">Cancel</a></div>
+            </div>
         </div>
-    </div>
 
-    
-    @* STORIES REORDER *@
-    <div class="admin-topic-mod" id="admin-story-reorder" disabled>
-        <div class="admin-topic-container">
-            <label class="control-label">Reorder Stories of the Prophets</label>
-            <ul class="reorderable" id="propets-reorder-list" data-inputid="order-prophets-list">
-                @foreach(var s in stories)
-                {<li data-modelid="@s.ID">@s.Prophet</li>}
-            </ul>
-            <input id="order-prophets-list" name="OrderProphetsList" style="visibility: hidden; position: absolute;" />
-            <input type="submit" name="submitType" value="Reorder Prophets" class="btn btn-primary" />
-            <div class="btn btn-primary topic-mod-hide" ><a href="javascript:void(0);">Cancel</a></div>
+        @* STORIES EDIT *@
+        <div class="admin-topic-mod" id="admin-story-edit" disabled>
+            <div class="admin-topic-container">
+                <label class="control-label">Edit Prophet</label>
+                <select name="EditStoryId" class="form-control">
+                    @foreach (var s in stories)
+                    {
+                        <option value="@s.ID">@s.Prophet</option>
+                    }
+                </select>
+                <input name="EditStoryText" class="text-input" />
+                <input type="submit" name="submitType" value="Edit Prophet" class="btn btn-primary" />
+                <div class="btn btn-primary topic-mod-hide"><a href="javascript:void(0);">Cancel</a></div>
+            </div>
         </div>
-    </div>
 
-    
-    @* SUBMIT *@
-    <div class="form-group">
-        <input id="submit-button" type="submit" name="submitType" value="@mode Notes" class="btn btn-primary" disabled/>
-    </div>
-</form>
-<div>
-    <a asp-action="Index">Back to List</a>
+
+        @* STORIES REORDER *@
+        <div class="admin-topic-mod" id="admin-story-reorder" disabled>
+            <div class="admin-topic-container">
+                <label class="control-label">Reorder Stories of the Prophets</label>
+                <ul class="reorderable" id="propets-reorder-list" data-inputid="order-prophets-list">
+                    @foreach (var s in stories)
+                    {
+                        <li data-modelid="@s.ID">@s.Prophet</li>
+                    }
+                </ul>
+                <input id="order-prophets-list" name="OrderProphetsList"
+                    style="visibility: hidden; position: absolute;" />
+                <input type="submit" name="submitType" value="Reorder Prophets" class="btn btn-primary" />
+                <div class="btn btn-primary topic-mod-hide"><a href="javascript:void(0);">Cancel</a></div>
+            </div>
+        </div>
+
+
+        @* SUBMIT *@
+        <div class="form-group mt-3 mb-0">
+            <input id="submit-button" type="submit" name="submitType" value="@mode Notes" class="btn btn-primary"
+                disabled />
+        </div>
+        <div>
+            <a asp-action="Index">Back to List</a>
+        </div>
+
+    </form>
 </div>
+
 @* NOTES PREVIEW *@
-@if(!String.IsNullOrEmpty(url))
+@if (!String.IsNullOrEmpty(url))
 {
     <div class="form-group">
-        <embed  src="https://docs.google.com/gview?url=@url&embedded=true" style="width:100%; height:500px;" ></embed>
+        <embed src="https://docs.google.com/gview?url=@url&embedded=true" style="width:100%; height:500px;"></embed>
     </div>
 }
 
 
 <script src="~/js/jquery-sortable.js"></script>
 <script>
-// Enable or Disable Topic Mod Group
-function toggleTopicModGroup(identifier, active)
-{
-    if (active){
-        $(identifier).show();
-    } else {
-        $(identifier).hide();
-    }
-}
-
-$("#topic-add-show").click(function () {
-    toggleTopicModGroup("#admin-topics-add", true);
-});
-$("#topic-delete-show").click(function () {
-    toggleTopicModGroup("#admin-topics-delete", true);
-});
-$("#topic-edit-show").click(function () {
-    toggleTopicModGroup("#admin-topics-edit", true);
-});
-$("#topic-reorder-show").click(function () {
-    toggleTopicModGroup("#admin-topics-reorder", true);
-});
-
-
-$("#story-add-show").click(function () {
-    toggleTopicModGroup("#admin-story-add", true);
-});
-$("#story-delete-show").click(function () {
-    toggleTopicModGroup("#admin-story-delete", true);
-});
-$("#story-edit-show").click(function () {
-    toggleTopicModGroup("#admin-story-edit", true);
-});
-$("#story-reorder-show").click(function () {
-    toggleTopicModGroup("#admin-story-reorder", true);
-});
-
-$(".topic-mod-hide").click(function () {
-    toggleTopicModGroup(".admin-topic-mod", false);
-})
-
-// Enable or Disale Ruku Display
-function toggleRuku(){
-    var selectedVal = $( "#surah-select option:selected" ).attr("value");
-    $("#ruku-select").prop("disabled", selectedVal === "");
-}
-
-$("#surah-select").change(function () {
-    toggleRuku();
-});
-
-// On change for file input
-$("#notesFile").change(function() {
-    ValidateRequiredInputs();
-});
-
-$("#title-input").on('input',function(e){
-    ValidateRequiredInputs();
-});
-
-function ValidateRequiredInputs(){
-    var isFileSelected = ("@mode" === "Edit") || ($("#notesFile").get(0).files.length === 1);
-    var isTitlePopulated = $("#title-input").val() !== "" ;
-    $("#submit-button").prop('disabled', !(isFileSelected && isTitlePopulated));
-}
-
-var afterSortCallback = function ($item, container, _super, event) {
-  $item.removeClass(container.group.options.draggedClass).removeAttr("style");
-  $("body").removeClass(container.group.options.bodyClass);
-  var parent = $item.parent();
-  var list = $(parent).children();
-  var ids = list.map(function() {
-      return $(this).data("modelid");
-  }).toArray();
-  var input = "#" + parent.data("inputid");
-  $(input).val(ids.join(","));
-}
-
-
-$(document).ready(function () {
-    toggleRuku();
-    $(".admin-topic-mod").hide();
-    ValidateRequiredInputs();
-
-    if("@ViewData["TopicModError"]" !== "" ){
-        alert("@ViewData["TopicModError"]");
+    // Enable or Disable Topic Mod Group
+    function toggleTopicModGroup(identifier, active) {
+        if (active) {
+            $(identifier).show();
+        } else {
+            $(identifier).hide();
+        }
     }
 
-    $("ul.reorderable").sortable({
-        onDrop: afterSortCallback
+    $("#topic-add-show").click(function () {
+        toggleTopicModGroup("#admin-topics-add", true);
     });
-});
+    $("#topic-delete-show").click(function () {
+        toggleTopicModGroup("#admin-topics-delete", true);
+    });
+    $("#topic-edit-show").click(function () {
+        toggleTopicModGroup("#admin-topics-edit", true);
+    });
+    $("#topic-reorder-show").click(function () {
+        toggleTopicModGroup("#admin-topics-reorder", true);
+    });
+
+
+    $("#story-add-show").click(function () {
+        toggleTopicModGroup("#admin-story-add", true);
+    });
+    $("#story-delete-show").click(function () {
+        toggleTopicModGroup("#admin-story-delete", true);
+    });
+    $("#story-edit-show").click(function () {
+        toggleTopicModGroup("#admin-story-edit", true);
+    });
+    $("#story-reorder-show").click(function () {
+        toggleTopicModGroup("#admin-story-reorder", true);
+    });
+
+    $(".topic-mod-hide").click(function () {
+        toggleTopicModGroup(".admin-topic-mod", false);
+    })
+
+    // Enable or Disale Ruku Display
+    function toggleRuku() {
+        var selectedVal = $("#surah-select option:selected").attr("value");
+        $("#ruku-select").prop("disabled", selectedVal === "");
+    }
+
+    $("#surah-select").change(function () {
+        toggleRuku();
+    });
+
+    // On change for file input
+    $("#notesFile").change(function () {
+        ValidateRequiredInputs();
+    });
+
+    $("#title-input").on('input', function (e) {
+        ValidateRequiredInputs();
+    });
+
+    function ValidateRequiredInputs() {
+        var isFileSelected = ("@mode" === "Edit") || ($("#notesFile").get(0).files.length === 1);
+        var isTitlePopulated = $("#title-input").val() !== "";
+        $("#submit-button").prop('disabled', !(isFileSelected && isTitlePopulated));
+    }
+
+    var afterSortCallback = function ($item, container, _super, event) {
+        $item.removeClass(container.group.options.draggedClass).removeAttr("style");
+        $("body").removeClass(container.group.options.bodyClass);
+        var parent = $item.parent();
+        var list = $(parent).children();
+        var ids = list.map(function () {
+            return $(this).data("modelid");
+        }).toArray();
+        var input = "#" + parent.data("inputid");
+        $(input).val(ids.join(","));
+    }
+
+
+    $(document).ready(function () {
+        toggleRuku();
+        $(".admin-topic-mod").hide();
+        ValidateRequiredInputs();
+
+        if ("@ViewData["TopicModError"]" !== "") {
+            alert("@ViewData["TopicModError"]");
+        }
+
+        $("ul.reorderable").sortable({
+            onDrop: afterSortCallback
+        });
+    });
+
+    
+    $('#notesFile').on('change',function(){
+        //get the file name
+        var fileName = $(this).val().replace('C:\\fakepath\\', " ");
+        //replace the "Choose a file" label
+        $(this).next('.custom-file-label').html(fileName);
+    })
 </script>
 
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
-

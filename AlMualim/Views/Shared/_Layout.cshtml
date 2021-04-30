@@ -34,6 +34,13 @@
                     <div class="nav-text radial-text">@menuItem</div>
                 </div>
             }
+            @if (User.Identity.IsAuthenticated)
+            {
+                <div class="nav-selection">
+                    <a asp-controller="Admin" asp-action="Index"></a>
+                    <div class="nav-text radial-text">Admin</div>
+                </div>
+            }
         </div>
     </nav>
 

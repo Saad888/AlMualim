@@ -78,16 +78,6 @@
     }
 }
 
-.admin-topics-container
-{
-    max-height: 200px;
-    border: 1px solid #ced4da;
-    border-radius: 0.25rem;
-    overflow:scroll;
-    padding: 10px;
-    margin-bottom: 10px;
-}
-
 .hidable-menu
 {
     position: fixed;
@@ -110,6 +100,43 @@
 
         .btn-primary{
             margin-top: 5px;
+        }
+    }
+}
+
+.add-edit-section{
+    .input-group-text{
+        width: 150px;
+    }
+
+
+    .entity-list{
+        display: grid;
+        grid-template-columns: 1fr 150px;
+        grid-template-rows: auto auto auto auto auto;
+        column-gap: 1rem;
+
+        .admin-topics-container{
+            height: 200px;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+            overflow-y:scroll;
+            padding: 10px;
+            background-color: white;
+
+            grid-column-start: 1;
+            grid-column-end: 2;
+            grid-row-start: 2;
+            grid-row-end: 6;
+        }
+
+        .btn{
+            margin: 3px;
+            height: 40px;
+
+            a{
+                font-size: 16px;
+            }
         }
     }
 }

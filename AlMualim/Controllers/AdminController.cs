@@ -526,7 +526,7 @@ namespace AlMualim.Controllers
                 case "Delete Prophet":
                     // Find Topic
                     var deleteStoryId = topicMod.DeleteStoryId;
-                    var story = await _context.Stories.FirstOrDefaultAsync(t => t.ID == deleteStoryId);
+                    var story = await _context.Stories.Include(s => s.Notes).FirstOrDefaultAsync(t => t.ID == deleteStoryId);
 
                     // If not found, error
                     if (story == null)
