@@ -4,66 +4,88 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h1 class="radial-text">Details</h1>
 
 <div>
-    <h4>Notes</h4>
+    <h4 class="white-text">Notes</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class = "col-sm-3 white-text">
             @Html.DisplayNameFor(model => model.Title)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class = "col-sm-9 white-text">
             @Html.DisplayFor(model => model.Title)
         </dd>
-        <dt class = "col-sm-2">
+
+        <dt class = "col-sm-3 white-text">
             @Html.DisplayNameFor(model => model.Description)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class = "col-sm-9 white-text">
             @Html.DisplayFor(model => model.Description)
         </dd>
-        <dt class = "col-sm-2">
+
+        <dt class = "col-sm-3 white-text">
             @Html.DisplayNameFor(model => model.Surah)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class = "col-sm-9 white-text">
             @Html.DisplayFor(model => model.Surah)
         </dd>
-        <dt class = "col-sm-2">
+
+        <dt class = "col-sm-3 white-text">
             @Html.DisplayNameFor(model => model.Ruku)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class = "col-sm-9 white-text">
             @Html.DisplayFor(model => model.Ruku)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.URL)
+
+        <dt class = "col-sm-3 white-text">
+            Islamic History
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.URL)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DateAdded)
+        <dd class = "col-sm-9 white-text">
+            @if(Model.IsHistory){<div>Yes</div>} else {<div>No</div>}
+        </td>
+
+        <dt class = "col-sm-3 white-text">
+            <div>Stories of the Prophet</div>
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DateAdded)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LastUpdated)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LastUpdated)
-        </dd>
-        <dt class = "col-sm-2">
+        <dd class = "col-sm-9 white-text">
+            @if (Model.Story != null) {<div>Model.Story.Prophet</div>}
+        </td>
+
+        <dt class = "col-sm-3 white-text">
             @Html.DisplayNameFor(model => model.Topics)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class = "col-sm-9 white-text">
             @String.Join(", ", Model.Topics.Select(t => t.Title))
         </td>
-        <dt class = "col-sm-2">
+
+        <dt class = "col-sm-3 white-text">
             @Html.DisplayNameFor(model => model.Tags)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class = "col-sm-9 white-text">
             @String.Join(", ", Model.Tags.Select(t => t.Title))
         </td>
+        
+        <dt class = "col-sm-3 white-text">
+            URL
+        </dt>
+        <dd class = "col-sm-9 white-text">
+            <a href=@Model.URL class="white-text">@Model.URL</a>
+        </dd>
+
+        <dt class = "col-sm-3 white-text">
+            @Html.DisplayNameFor(model => model.DateAdded)
+        </dt>
+        <dd class = "col-sm-9 white-text">
+            @Html.DisplayFor(model => model.DateAdded)
+        </dd>
+
+        <dt class = "col-sm-3 white-text">
+            @Html.DisplayNameFor(model => model.LastUpdated)
+        </dt>
+        <dd class = "col-sm-9 white-text">
+            @Html.DisplayFor(model => model.LastUpdated)
+        </dd>
     </dl>
 </div>
 <div>

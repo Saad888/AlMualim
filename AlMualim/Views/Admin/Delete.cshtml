@@ -4,72 +4,94 @@
     ViewData["Title"] = "Delete";
 }
 
-<h1>Delete</h1>
+<h1 class="std-text">Delete</h1>
 
-<h3>Are you sure you want to delete this?</h3>
+<h3 class="std-text">Are you sure you want to delete this?</h3>
 <div>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class = "col-sm-3 white-text">
             @Html.DisplayNameFor(model => model.Title)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class = "col-sm-9 white-text">
             @Html.DisplayFor(model => model.Title)
         </dd>
-        <dt class = "col-sm-2">
+
+        <dt class = "col-sm-3 white-text">
             @Html.DisplayNameFor(model => model.Description)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class = "col-sm-9 white-text">
             @Html.DisplayFor(model => model.Description)
         </dd>
-        <dt class = "col-sm-2">
+
+        <dt class = "col-sm-3 white-text">
             @Html.DisplayNameFor(model => model.Surah)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class = "col-sm-9 white-text">
             @Html.DisplayFor(model => model.Surah)
         </dd>
-        <dt class = "col-sm-2">
+
+        <dt class = "col-sm-3 white-text">
             @Html.DisplayNameFor(model => model.Ruku)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class = "col-sm-9 white-text">
             @Html.DisplayFor(model => model.Ruku)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.URL)
+
+        <dt class = "col-sm-3 white-text">
+            Islamic History
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.URL)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DateAdded)
+        <dd class = "col-sm-9 white-text">
+            @if(Model.IsHistory){<div>Yes</div>} else {<div>No</div>}
+        </td>
+
+        <dt class = "col-sm-3 white-text">
+            <div>Stories of the Prophet</div>
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DateAdded)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LastUpdated)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LastUpdated)
-        </dd>
-        <dt class = "col-sm-2">
+        <dd class = "col-sm-9 white-text">
+            @if (Model.Story != null) {<div>Model.Story.Prophet</div>}
+        </td>
+
+        <dt class = "col-sm-3 white-text">
             @Html.DisplayNameFor(model => model.Topics)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class = "col-sm-9 white-text">
             @String.Join(", ", Model.Topics.Select(t => t.Title))
         </td>
-        <dt class = "col-sm-2">
+
+        <dt class = "col-sm-3 white-text">
             @Html.DisplayNameFor(model => model.Tags)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class = "col-sm-9 white-text">
             @String.Join(", ", Model.Tags.Select(t => t.Title))
         </td>
+        
+        <dt class = "col-sm-3 white-text">
+            URL
+        </dt>
+        <dd class = "col-sm-9 white-text">
+            <a href=@Model.URL class="white-text">@Model.URL</a>
+        </dd>
+
+        <dt class = "col-sm-3 white-text">
+            @Html.DisplayNameFor(model => model.DateAdded)
+        </dt>
+        <dd class = "col-sm-9 white-text">
+            @Html.DisplayFor(model => model.DateAdded)
+        </dd>
+
+        <dt class = "col-sm-3 white-text">
+            @Html.DisplayNameFor(model => model.LastUpdated)
+        </dt>
+        <dd class = "col-sm-9 white-text">
+            @Html.DisplayFor(model => model.LastUpdated)
+        </dd>
     </dl>
     
-    <form asp-action="Delete">
+    <form asp-action="Delete" class="mb-3">
         <input type="hidden" asp-for="ID" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <a asp-action="Index" class="std-text">Back to List</a>
     </form>
 </div>
 @* NOTES PREVIEW *@

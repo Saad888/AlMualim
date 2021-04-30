@@ -7,7 +7,7 @@
     var surah = (List<Surah>)ViewData["Surah"];
 }
 
-<h1>@title</h1>
+<h1 class="radial-text">@title</h1>
 
 <form asp-action="Reorder" asp-method="POST" asp-route-mode="@mode">
     <ul class="reorderable expanded">
@@ -29,7 +29,7 @@
     </div>
 </form>
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index" class="std-text">Back to List</a>
 </div>
 
 <script src="~/js/jquery-sortable.js"></script>
