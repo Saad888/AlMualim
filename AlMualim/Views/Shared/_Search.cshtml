@@ -1,0 +1,122 @@
+@{
+    var surah = (List<Surah>)ViewData["Surah"];
+    var stories = (List<Stories>)ViewData["Stories"];
+    var topics = (List<Topics>)ViewData["Topics"];
+}
+
+@* USING SEARCH PARTIAL:
+    - have a results-container div
+    - delcare URL in parent script
+
+ *@
+
+<div class="jumbotron py-3 search-jumbotron">
+    <h1 class="radial-text">Search for Notes</h1>
+
+    <div class="input-group mb-1">
+        <input id="search-string" type="text" class="form-control" placeholder="" aria-label="Search"
+            aria-describedby="search-button">
+        <div class="input-group-append">
+            <button class="btn btn-success search-button" type="button">Search</button>
+        </div>
+    </div>
+
+    <div class="row d-flex justify-content-center mb-1">
+        <a class="search-text" href="#" id="search-option-toggle">More Search Options</a>
+    </div>
+
+    <div id="advanced-search" style="display:none">
+        @* Surah Search *@
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="select-surah">Surah</label>
+            </div>
+            <select class="custom-select" id="select-surah">
+                <option value="0" selected>Select..</option>
+                @foreach (var s in surah)
+                {
+                    <option value="@s.ID">(@s.ID) @s.ToString()</option>
+                }
+            </select>
+        </div>
+
+        @* Ruku Search *@
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="select-ruku">Ruku</label>
+            </div>
+            <input id="select-ruku" min="0" type="number" class="form-control">
+        </div>
+
+        @* Prophet *@
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="select-prophet">Prophet</label>
+            </div>
+            <select class="custom-select" id="select-prophet">
+                <option value="-1" selected>Select..</option>
+                @foreach (var s in stories)
+                {
+                    <option value="@s.ID">@s.Prophet</option>
+                }
+            </select>
+        </div>
+
+        @* Topics *@
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="select-topic">Topic</label>
+            </div>
+            <select class="custom-select" id="select-topic">
+                <option value="-1" selected>Select..</option>
+                <option value="-2">Islamic History</option>
+                @foreach (var s in topics)
+                {
+                    <option value="@s.ID">@s.Title</option>
+                }
+            </select>
+        </div>
+
+        <div class="row d-flex justify-content-center mb-1">
+            <button class="btn btn-success w-25 search-button" type="button">Search</button>
+        </div>
+    </div>
+</div>
+
+
+<div id="results-loader" style="display:none">
+    <div class="d-flex justify-content-center align-items-center">
+        <h4 class="search-load-text">Loading... </h4>
+        <div class="spinner-border text-warning" role="status"><span class="sr-only">Loading...</span></div>
+    </div>
+</div>
+
+<script>
+    function toggleAdvSearch() {
+        $("#advanced-search").slideToggle(250);
+    }
+
+    function search() {
+        $("#results-loader").slideDown(250);
+        $("#results-container").slideUp(250);
+
+        var advSearch = $("#advanced-search").is(":visible");
+        var surah = advSearch ? $('#select-surah').find(":selected").val() : 0;
+        var ruku = advSearch ? $('#select-ruku').val() : 0;
+        var topic = advSearch ? $('#select-topic').find(":selected").val() : -1;
+        var story = advSearch ? $('#select-prophet').find(":selected").val() : -1;
+        var searchString = $("#search-string").val();
+
+        var data = { surah, ruku, topic, story, searchString };
+        $("#results-container").load(url, data, function () {
+            $("#results-loader").slideUp(250);
+            $("#results-container").slideDown(250);
+        });
+    }
+
+    $(document).ready(function () {
+    @* Show and Hide search button *@
+            $("#search-option-toggle").click(toggleAdvSearch);
+        $(".search-button").click(search);
+    });
+</script>

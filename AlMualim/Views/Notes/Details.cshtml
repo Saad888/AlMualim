@@ -6,20 +6,21 @@
     var isUrlValid = (bool)ViewData["IsUrlValid"];
 }
 
-<h1>@Model.Title</h1>
-@if(surah != null)
-{
-    <h3>@surah.ToString()</h3>
-}
-<h3>@Model.Description</h3>
-<p>@String.Join(", ", Model.Topics.Select(t => t.Title).ToList())</p>
-@if(isUrlValid)
-{
-    <embed  src="https://docs.google.com/gview?url=@Model.URL&embedded=true" style="width:100%; height:1000px;" ></embed>
-}
-else
-{
-    <p> WARNING - Invalid URL Format - Please contact administrator</p>
-}
-<p><a href="@Model.URL">Open Directly</a></p>
-<p>Last Updated - @Model.LastUpdated</p>
+<div class="container">
+    <h1 class="radial-text">@Model.Title</h1>
+    @if (surah != null){<h3 class="std-text">@surah.ToString()</h3>}
+    <p class="std-text mb-1">@Model.Description</p>
+    <p class="std-text mb-3"><strong>Topics:</strong> @String.Join(", ", Model.Topics.Select(t => t.Title).ToList())</p>
+    @if (isUrlValid)
+    {
+        <embed src="https://docs.google.com/gview?url=@Model.URL&embedded=true" style="width:100%; height:1000px;"></embed>
+    }
+    else
+    {
+        <p class="text-danger"> WARNING - Invalid URL Format - Please contact administrator</p>
+    }
+    <div class="row">
+    <p class="col std-text text-left"><span>Last Updated - @Model.LastUpdated</span></p>
+    <p class="col text-right"><a class="std-text" href="@Model.URL">Download</a></p>
+    </div>
+</div>
