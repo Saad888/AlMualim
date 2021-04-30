@@ -19,7 +19,7 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
 
 
-    <nav class="navigation" style="display:none; opacity:0">
+    <nav class="navigation">
         <div class="nav-logo">
             <a href="./" class="nav-icon"></a>
         </div>
@@ -41,24 +41,7 @@
         @RenderBody()
     </div>
 
-    <div class="footer-spacing">
-    </div>
-    <div class="footer radial-text">
-        © 2021 - AlMualim - Note by Uzma Jabeen  - Website designed by Teraflare Development Inc.
-    </div>
     @await RenderSectionAsync("Scripts", required: false)
-
-    
-    <script>
-        $(document).ready(function(){
-        $(".navigation")
-            .slideDown(1500)
-            .animate(
-                { opacity: 1 },
-                { queue: false, duration: 1500 }
-            );
-        });
-    </script>
 </body>
 
 </html>

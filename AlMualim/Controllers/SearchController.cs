@@ -26,34 +26,46 @@ namespace AlMualim.Controllers
         public async Task<IActionResult> Index(int? surah, int? ruku, int? topic, string searchString)
         {
             // Get Surah and Topics list
-            var surahs = Surah.List(); 
-            var topics = await _context.Topics.ToListAsync();
+            var surahsList = await _context.Notes.Select(n => n.Surah).ToListAsync();
+            var surahs = Surah.List().Where(s => surahsList.Contains(s.ID)).ToList(); 
+            var topics = await _context.Topics.OrderBy(t => t.Order).ToListAsync();
+            var stories = await _context.Stories.ToListAsync();
             ViewData["Surah"] = surahs;
             ViewData["Topics"] = topics;
+            ViewData["Stories"] = stories;
 
-            // Store search parameters
-            var searchParams = new Dictionary<string, object>();
-            searchParams.Add("Surah", surah);
-            searchParams.Add("Ruku", ruku);
-            searchParams.Add("Topic", topic);
-            searchParams.Add("Search", searchString);
-            ViewData["SearchParams"] = searchParams;
+            return View();
+        }
+
+        public async Task<IActionResult> SearchResults(int? surah, int? ruku, int? topic, int? story, string searchString)
+        {
+            var surahs = Surah.List(); 
+            ViewData["Surah"] = surahs;
+
+            if (surah <= 0) surah = null;
+            if (ruku <= 0) ruku = null;
+            if (topic < 0 && topic != -2) topic = null; // -2 represents Islamic History
+            if (story < 0) story = null;
 
             // If surah is not set as a parameter, ruku is also not a valid parameter
             if (surah == null) ruku = null;
 
             // If no search parameters, return view without results
-            if ((surah == null) && (ruku == null) && (topic == null) && (String.IsNullOrEmpty(searchString)))
+            if ((surah == null) && (ruku == null) && (topic == null) && (story == null) && (String.IsNullOrEmpty(searchString)))
                 return View();
 
             // If search results, get list of notes and filter
-            var notes = await _context.Notes.Include(n => n.Topics).Include(n => n.Tags).ToListAsync();
+            var notes = await _context.Notes.Include(n => n.Topics).Include(n => n.Tags).Include(n => n.Story).ToListAsync();
             
             // Filter surah and ruku
             notes = notes.Where(n => ((surah != null ? n.Surah == surah : true) && (ruku != null ? n.Ruku == ruku : true))).ToList();
 
             // Filter topic
-            notes = notes.Where(n => (topic != null ? n.Topics.Any(t => t.ID == topic) : true)).ToList();
+            if (topic == -2) notes = notes.Where(n => n.IsHistory).ToList();
+            else notes = notes.Where(n => (topic != null ? n.Topics.Any(t => t.ID == topic) : true)).ToList();
+
+            // Filter story
+            if (story != null) notes = notes.Where(n => n.Story != null ? n.Story.ID == story : false).ToList();
 
             // Filter by search string
             if (!String.IsNullOrEmpty(searchString))
