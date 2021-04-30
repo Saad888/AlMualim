@@ -12,64 +12,26 @@
     var storiesList = (List<Stories>)ViewData["Stories"];
 }
 
-<h1>Administration Page</h1>
+<h1 class="radial-text">Administration Page</h1>
 
-<div class="search-container">
-    <form method="POST" asp-action="Index" class="search-filters-container">
-        <div class="search-filter-container">
-            <div class="search-filter-text">Surah</div>
-            <select name="surah" class="form-control">
-                <option value="">---</option>
-                @foreach(var s in surah)
-                {
-                    @if((int?)s.ID == surahParam)
-                        {<option value="@s.ID" selected="selected">@s.ToString()</option>}
-                    else
-                        {<option value="@s.ID">@s.ToString()</option>}
-                }
-            </select>
-        </div>
-        <div class="search-filter-container">
-            <div class="search-filter-text">Ruku #</div>
-            <input type="number" name="ruku" class="form-control" min="1" value="@rukuParam"/>
-        </div>
-        <div class="search-filter-container">
-            <div class="search-filter-text">Topics</div>
-            <select name="topic" class="form-control" >
-                <option value="">---</option>
-                @foreach(var t in topics)
-                {
-                    @if((int?)t.ID == topicParam)
-                        {<option value="@t.ID" selected="selected">@t.Title</option>}
-                    else
-                        {<option value="@t.ID">@t.Title</option>}
-                }
-            </select>
-        </div>
-        <div class="search-filter-container">
-            <div class="search-filter-text">Search</div>
-            <input name="searchString" class="form-control" value="@searchParam"/>
-        </div>
-        <div class="form-group" class="search-filter-container">
-            <input type="submit" value="Search" class="btn btn-primary search-btn" />
-        </div>
-    </form>
-</div>
-
-<p>
-    <a asp-action="Add">Add New Notes</a> | 
-    <a asp-action="Reorder" asp-route-mode="History">Reorder History Notes</a> | 
-    <a id="reorder-stories-activate" href=javascript:void(0);>Reorder Prophets Notes</a> | 
-    <a id="password-activate" href=javascript:void(0);>Change Admin Password</a> | 
-    <a asp-action="Cleanup">Cleanup Database</a>
-</p>
+<form class="mb-3" method="GET">
+    <div class="btn-group" role="group">
+        <button type="submit" class="btn btn-success" asp-action="Add">Add New Notes</button>
+        <a type="submit" class="btn btn-info" method="GET" asp-action="Reorder" asp-route-mode="History">Reorder History Notes</a>
+        <button type="button" id="reorder-stories-activate"  class="btn btn-info">Reorder Prophets Notes</button>
+        <button type="button" id="password-activate" class="btn btn-secondary">Change Admin Password</button>
+        <button type="submit" class="btn btn-secondary" asp-action="Cleanup">Cleanup Database</button>
+    </div>
+</form>
 
 <div id="reorder-stories-container" class="hidable-menu">
     <form id="reorder-form" asp-action="Reorder" method="GET" class="hidable-core">
         <label class="control-label">Select the Prophet...</label><br>
         <select name="storyid" class="form-control" id="storiesSelection">
-            @foreach(var story in storiesList)
-            {<option value="@story.ID" data-storyid="@story.ID">@story.Prophet</option>}
+            @foreach (var story in storiesList)
+            {
+                <option value="@story.ID" data-storyid="@story.ID">@story.Prophet</option>
+            }
         </select>
         <input name="mode" value="Prophet" style="visibility: hidden; position: absolute;" />
         <input id="submit-button" type="submit" value="Reorder Notes" class="btn btn-primary" />
@@ -90,56 +52,78 @@
     </form>
 </div>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Surah)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Ruku)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Topics)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => surah.FirstOrDefault(s => s.ID == item.Surah).Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Ruku)
-            </td>
-            <td>
-                <p>
-                    @String.Join(',', item.Topics.Select(t => t.Title))
-                </p>
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="jumbotron admin-table py-3">
+    <table class="display compact" id="primary-table">
+        <thead>
+            <tr>
+                <th>
+                    Title
+                </th>
+                <th>
+                    Surah
+                </th>
+                <th>
+                    Prophet
+                </th>
+                <th>
+                    Topics
+                </th>
+                <th>
+                    Last Updated
+                </th>
+                <th>
+                    Actions
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Title)
+                    </td>
+                    <td>
+                        @if (item.Surah != null){<p>@surah.FirstOrDefault(s => s.ID == item.Surah).Title</p>}
+                    </td>
+                    <td>
+                        @if(item.Story != null){<p>@item.Story.Prophet</p>}
+                    </td>
+                    <td>
+                        <p>
+                            @{
+                                var itemList = new List<string>();
+                                if (item.IsHistory) itemList.Add("History");
+                                var topicString = "";
+                                itemList.AddRange(item.Topics.Select(t => t.Title).ToList());
+                                if (itemList.Count() == 1) topicString = itemList.First();
+                                else if (itemList.Count() > 1) topicString = itemList.First() + " and " + (itemList.Count() - 1).ToString() + " more";
+                            }
+                            @topicString
+                        </p>
+                    </td>
+                    <td>
+                        @item.LastUpdated.ToString()
+                    </td>
+                    <td>
+                        <div class="btn-group btn-group-sm" role="group">
+                            <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-success">Edit</a>
+                            <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-info">Details</a>
+                            <a asp-action="Delete" asp-route-id="@item.ID" class="btn btn-danger">Delete</a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
 
 <script>
     $("#reorder-stories-activate").click(() => {
         $("#reorder-stories-container").show();
     });
-    
+
     $("#reorder-stories-deactivate").click(() => {
         $("#reorder-stories-container").hide();
     });
@@ -147,16 +131,15 @@
     $("#password-activate").click(() => {
         $("#password-container").show();
     });
-    
+
     $("#password-deactivate").click(() => {
         $("#password-container").hide();
     });
 
-    $(".password-entry").change(() =>
-    {
+    $(".password-entry").change(() => {
         var valA = $("#password-entry-a").val()
         var valB = $("#password-entry-b").val()
-        if (valA != valB || valA.length < 6){
+        if (valA != valB || valA.length < 6) {
             $("#password-submit-button").prop("disabled", true);
             $("#password-warning").show();
         } else {
@@ -170,5 +153,7 @@
         $("#password-container").hide();
         $("#password-warning").hide();
         $("#password-submit-button").prop("disabled", true);
+
+        $("#primary-table").DataTable();
     });
 </script>
