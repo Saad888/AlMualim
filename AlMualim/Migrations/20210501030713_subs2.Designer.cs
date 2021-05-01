@@ -4,14 +4,16 @@ using AlMualim.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AlMualim.Migrations
 {
     [DbContext(typeof(AlMualimDbContext))]
-    partial class AlMualimDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210501030713_subs2")]
+    partial class subs2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -99,6 +101,9 @@ namespace AlMualim.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UnsubscriptionCode")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");

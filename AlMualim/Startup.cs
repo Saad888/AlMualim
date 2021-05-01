@@ -37,6 +37,9 @@ namespace AlMualim
             services.AddControllersWithViews();
 
             services.AddSingleton<IAzureBlobService, AzureBlobService>();
+            services.AddSingleton<IEmailGenerator, EmailGenerator>();
+            services.AddSingleton<IEmailService, EmailService>();
+            services.AddTransient<ISubscriptionService, SubscriptionService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

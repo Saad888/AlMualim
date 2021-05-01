@@ -1,0 +1,55 @@
+@{
+    ViewData["Title"] = "Unsubscribe";
+}
+
+<div class="container">
+    <h1 class="radial-text">Subscribe</h1>
+    <p class="std-text">If you wish to be notified whenever new articles are posted, simply add your name and email
+        below.</p>
+    <form id="subscribe-form">
+        <div class="input-group">
+            <input type="text" aria-label="Name" class="form-control" placeholder="Name" name="Name" id="name-entry"
+                required>
+            <input type="email" aria-label="Email" class="form-control" placeholder="Email" name="Email"
+                id="email-entry" required>
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="submit" id="subscribe-btn">Subscribe</button>
+            </div>
+        </div>
+    </form>
+    <div id="subscribe-succeeded" style="display:none">
+        <p class="white-text">Success! You're now subscribed, check your email for a confirmation email. If you don't
+            see it, check your spam inbox.</p>
+    </div>
+    <div id="subscribe-failed" style="display:none">
+        <p class="text-danger std-text">We ran into an error, your email was not saved.</p>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#subscribe-form").submit(function (e) {
+            e.preventDefault();
+            @* Hide success and error messages *@
+            $("#subscribe-succeeded").fadeOut(50);
+            $("#subscribe-failed").fadeOut(50);
+
+            @* Get form data *@
+            var Name = $("#name-entry").val();
+            var Email = $("#email-entry").val();
+            var data = JSON.stringify({ Name, Email });
+
+            @* Make call *@
+            $.ajax({
+                method: "POST",
+                url: "./Subscription/Subscribe",
+                data,
+                contentType: "application/json; charset=utf-8"
+            }).done(
+                function () { $("#subscribe-succeeded").slideDown(250); }
+            ).fail(
+                function () { $("#subscribe-failed").slideDown(250); }
+            );
+        });
+    });
+</script>

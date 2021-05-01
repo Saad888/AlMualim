@@ -1,0 +1,10 @@
+@{
+    ViewData["Title"] = "Subscribe";
+    var email = (string)ViewData["Email"];
+}
+
+<div class="container">
+    <h1 class="radial-text">Unsubscribe</h1>
+    @if(String.IsNullOrEmpty(email)) {<p class="std-text">Your email could not be found.</p>}
+    else {<p class="std-text">The email "@email" has been unsubscribed successfully</p>}
+</div>
