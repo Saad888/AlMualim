@@ -15,7 +15,7 @@
     margin: 25vh auto auto auto;
     height: auto;
     width: 670px;
-    z-index: 100;
+    z-index: 50;
 
     .wt{
         width: 100%;
@@ -99,6 +99,54 @@
             &:hover {
                 text-decoration: none; 
                 background: radial-gradient(50% 50% at 50% 50%, #ffecad 0%, #ffd438 100%);
+            }
+        }
+    }
+}
+
+@media only screen and (max-width:990px)
+{
+    .wt-wrapper{
+        width: 300px;
+
+        .wt{
+        margin-bottom: 5px;
+        }
+    
+        .wt-main{
+            height: 75px;
+    
+            span{
+                font-size: 40px;
+            }
+        }
+    
+        
+        .wt-subtext{
+            height: 30px;
+    
+            span{
+                font-size: 15px;
+            }
+        }
+        
+        .wt-min-wrapper{
+            height: 30px;
+    
+            .wt-author{
+                width: 140px;
+        
+                span{
+                    font-size: 15px;
+                }
+            }
+    
+            .wt-sub{
+                width: 140px;
+    
+                span{
+                    font-size: 15px;
+                }
             }
         }
     }

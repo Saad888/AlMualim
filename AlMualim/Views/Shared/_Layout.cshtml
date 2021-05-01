@@ -28,7 +28,7 @@
 
     <nav class="navigation">
         <div class="nav-logo">
-            <a href="./" class="nav-icon"></a>
+            <a asp-controller="Home" asp-action="Index" class="nav-icon"></a>
         </div>
         <div class="nav-container">
             @foreach (var menuItem in menuList)
@@ -46,7 +46,26 @@
                 </div>
             }
         </div>
+        <div class="nav-mobile"><a class="nav-mobile-icon" href="#" id="mobile-nav-trigger"></a></div>
     </nav>
+    <div class="nav-mobile-wrapper">
+        <div class="nav-mobile-container">
+            @foreach (var menuItem in menuList)
+            {
+                <div class="mobile-nav-selection">
+                    <a asp-controller="@menuItem" asp-action="Index"></a>
+                    <div class="mobile-nav-text radial-text">@menuItem</div>
+                </div>
+            }
+            @if (User.Identity.IsAuthenticated)
+            {
+                <div class="mobile-nav-selection">
+                    <a asp-controller="Admin" asp-action="Index"></a>
+                    <div class="mobile-nav-text radial-text">Admin</div>
+                </div>
+            }
+        </div>
+    </div>
 
     <div class="container">
         <div class="nav-spacer">
@@ -56,6 +75,14 @@
     </div>
 
     @await RenderSectionAsync("Scripts", required: false)
+
+    <script>
+        $(document).ready(function() {
+            $("#mobile-nav-trigger").click(function(){
+                $(".nav-mobile-wrapper").slideToggle(250);
+            });
+        });
+    </script>
 </body>
 
 </html>
