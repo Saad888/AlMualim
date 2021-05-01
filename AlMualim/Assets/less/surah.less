@@ -1,5 +1,4 @@
-.surah-list
-{
+.surah-list{
     grid-template-columns: 130px 1fr 200px 50px;
 
     .surah-number{
@@ -17,5 +16,22 @@
         justify-content: flex-end;
         font-size: 45px;
         font-family: @font-arabic;
+    }
+}
+
+
+@media only screen and (max-width:990px)
+{
+    .surah-list{
+        grid-template-columns: 55px 1fr 100px 40px;
+    
+        .surah-number{
+            font-size: 20px;
+            padding-top: 15px;
+        }
+    
+        .surah-arabic{
+            font-size: 20px;
+        }
     }
 }
