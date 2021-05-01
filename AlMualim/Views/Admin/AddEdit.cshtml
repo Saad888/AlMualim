@@ -1,13 +1,13 @@
 @model AlMualim.Models.Notes
 
 @{
-    ViewData["Title"] = "Add New Notes";
     var surah = (List<Surah>)ViewData["Surah"];
     var topics = (List<Topics>)ViewData["Topics"];
     var stories = (List<Stories>)ViewData["Stories"];
     var tagsIn = (string)ViewData["Tags"];
     var mode = (string)ViewData["ViewMode"];
     var url = Model != null ? Model.URL : "";
+    ViewData["Title"] = mode + " Notes";
 }
 
 <div class="jumbotron py-2 add-edit-section">

@@ -23,12 +23,7 @@ namespace AlMualim.Controllers
             ViewData["Year"] = DateTime.Now.Year.ToString();
             return View();
         }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
+        
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

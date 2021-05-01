@@ -1,7 +1,7 @@
 @model AlMualim.Models.Notes
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Notes Details";
 }
 
 <h1 class="radial-text">Details</h1>
@@ -89,9 +89,9 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.ID">Edit</a> |
-    <a asp-action="Delete" asp-route-id="@Model.ID">Delete</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model.ID" class="std-text">Edit</a> |
+    <a asp-action="Delete" asp-route-id="@Model.ID" class="std-text">Delete</a> |
+    <a asp-action="Index" class="std-text">Back to List</a>
 </div>
 <br/>
 @* NOTES PREVIEW *@

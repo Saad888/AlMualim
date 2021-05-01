@@ -1,8 +1,8 @@
 @model IEnumerable<AlMualim.Models.Notes>
 
 @{
-    ViewData["Title"] = "Surah Notes";
     var surah = (Surah)ViewData["Surah"];
+    ViewData["Title"] = @surah.ToString();
 }
 
 

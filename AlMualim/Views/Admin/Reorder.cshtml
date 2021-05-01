@@ -1,8 +1,8 @@
 @model IEnumerable<AlMualim.Models.Notes>
 
 @{
-    ViewData["Title"] = "Reorder";
     var mode = (string)ViewData["Mode"];
+    ViewData["Title"] = "Reorder " + mode + " Notes";
     var title = (string)ViewData["Header"];
     var surah = (List<Surah>)ViewData["Surah"];
 }

@@ -1,9 +1,9 @@
 @model IEnumerable<AlMualim.Models.Notes>
 
 @{
-    ViewData["Title"] = "Topic Notes Notes";
     var topic = (Topics)ViewData["Topic"];
     var surah = (List<Surah>)ViewData["Surah"];
+    ViewData["Title"] = topic.Title;
 }
 
 <ul class="list-container container px-0">
