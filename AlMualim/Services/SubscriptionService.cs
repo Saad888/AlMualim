@@ -61,10 +61,10 @@ namespace AlMualim.Services
             await _context.SaveChangesAsync();
 
             // Generate notification email
-            // var notificationEmail = _generator.GenerateSubEmail(await _context.Subscriptions.FirstOrDefaultAsync(s => s.Email == email));
+            var notificationEmail = _generator.GenerateSubEmail(await _context.Subscriptions.FirstOrDefaultAsync(s => s.Email == email));
 
             // Send Notification email
-            // await _service.SendEmailAsync(notificationEmail);
+            await _service.SendEmailAsync(notificationEmail);
         }
 
         public async Task<string> UnsubscribeEmail(Guid emailId)

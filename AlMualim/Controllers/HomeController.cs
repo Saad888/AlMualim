@@ -20,6 +20,7 @@ namespace AlMualim.Controllers
 
         public IActionResult Index()
         {
+            ViewData["Year"] = DateTime.Now.Year.ToString();
             return View();
         }
 
