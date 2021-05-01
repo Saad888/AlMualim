@@ -31,6 +31,7 @@ namespace AlMualim.Controllers
         // GET: Unsubscribe
         public async Task<IActionResult> Unsubscribe(string id)
         {
+            id = id.Trim('+');
             Guid guid;
             string email = String.Empty;
             var validId = Guid.TryParse(id, out guid);

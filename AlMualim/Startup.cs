@@ -39,6 +39,7 @@ namespace AlMualim
             services.AddSingleton<IAzureBlobService, AzureBlobService>();
             services.AddSingleton<IEmailGenerator, EmailGenerator>();
             services.AddSingleton<IEmailService, EmailService>();
+            services.AddSingleton<IEmailQueue, EmailQueue>();
             services.AddTransient<ISubscriptionService, SubscriptionService>();
         }
 

@@ -24,13 +24,16 @@ namespace AlMualim.Controllers
         private readonly AlMualimDbContext _context;
         private readonly IAzureBlobService _azureBlobService;
         private readonly IConfiguration _configuration;
+        private readonly ISubscriptionService _subscriptionService;
+
         private const int WEIGHT_LIMIT = 75;
 
-        public AdminController(AlMualimDbContext context, IAzureBlobService azureBlobService, IConfiguration configuration)
+        public AdminController(AlMualimDbContext context, IAzureBlobService azureBlobService, IConfiguration configuration, ISubscriptionService subscription)
         {
             _context = context;
             _azureBlobService = azureBlobService;
             _configuration = configuration;
+            _subscriptionService = subscription;
         }
 
         #region Index
@@ -136,8 +139,12 @@ namespace AlMualim.Controllers
                     notes.URL = await _azureBlobService.UploadNotesAndGetURL(notesFile);
 
                 // Submit if model state is valid
-                _context.Add(notes);
+                await _context.Notes.AddAsync(notes);
                 await _context.SaveChangesAsync();
+
+                // Send subscription mail
+                _subscriptionService.Broadcast(notes);
+
                 return RedirectToAction(nameof(Index));
             } 
 

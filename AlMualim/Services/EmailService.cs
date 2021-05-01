@@ -1,27 +1,40 @@
 using System;
-using System.Net;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Threading;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
-using System.IO;
-using Azure.Storage.Blobs;
-using Microsoft.AspNetCore.Http;
-using Azure.Storage.Blobs.Models;
-using AlMualim.Data;
+using SendGrid;
+using SendGrid.Helpers.Mail;
+using AlMualim.Services;
 using AlMualim.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace AlMualim.Services
 {
     public class EmailService : IEmailService
     {
-        public async Task SendEmailAsync(Email email) {return;}
-        public async Task SendEmailsAsync(List<Email> emails) {return;}
+        private readonly IConfiguration _config;
+
+        public EmailService(IConfiguration configuration)
+        {
+            _config = configuration;
+        }
+
+        public async Task SendEmailsAsync(List<Email> emails) 
+        {
+            var apiKey = _config.GetValue<string>("SendGridApiKey");
+            var client = new SendGridClient(apiKey);
+            var from = new EmailAddress("noreply@almualim.ca", "AlMualim");
+            var plainTextContent = "";
+
+            foreach(var email in emails)
+            {
+                var to = new EmailAddress(email.ToEmail, email.Name);
+                var msg = MailHelper.CreateSingleEmail(from, to, email.Subject, plainTextContent, email.Message);
+                var responseCode = await client.SendEmailAsync(msg);
+            }
+        }
         
-        public void SendEmail(Email email) {return;}
-        public void SendEmails(List<Email> emails) {return;}
+        public async Task SendEmailAsync(Email email) {await SendEmailsAsync(new List<Email>{email});}
+        public void SendEmail(Email email) {SendEmails(new List<Email>{email});}
+        public void SendEmails(List<Email> emails) {SendEmailsAsync(emails).Wait();}
     }
 }

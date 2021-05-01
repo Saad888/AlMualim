@@ -1,15 +1,9 @@
 using System;
-using System.Net;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
-using System.IO;
-using Azure.Storage.Blobs;
-using Microsoft.AspNetCore.Http;
-using Azure.Storage.Blobs.Models;
 using AlMualim.Data;
 using AlMualim.Models;
 using Microsoft.EntityFrameworkCore;
@@ -22,21 +16,19 @@ namespace AlMualim.Services
         private readonly IEmailGenerator _generator;
         private readonly IEmailService _service;
         private readonly IConfiguration _configuration;
+        private readonly IEmailQueue _queue; 
 
-        private ConcurrentQueue<Notes> _queue {get; set;}
         private CancellationTokenSource _tokenSource {get; set;}
 
         #region Constructors
-        public SubscriptionService(AlMualimDbContext context, IEmailGenerator generator, IEmailService service, IConfiguration configuration)
+        public SubscriptionService(AlMualimDbContext context, IEmailGenerator generator, IEmailService service, IConfiguration configuration, IEmailQueue queue)
         {
             // Assing services
             _context = context;
             _generator = generator;
             _service = service;
             _configuration = configuration;
-
-            // Generate queue
-            _queue = new ConcurrentQueue<Notes>();
+            _queue = queue;
 
             // Generate source
             _tokenSource = new CancellationTokenSource();
@@ -87,6 +79,7 @@ namespace AlMualim.Services
         {
             // Add notes to the concurrent queue
             _queue.Enqueue(newNote);
+            var subscribers = _context.Subscriptions.ToList();
 
             // If a thread is currently active, cancells the task
             if (_tokenSource != null)
@@ -96,7 +89,7 @@ namespace AlMualim.Services
 
             _tokenSource = new CancellationTokenSource();
             // Generate a new broadcast thread
-            Task.Run(() => DelayedBroadcast(_tokenSource.Token));
+            Task.Run(() => DelayedBroadcast(_tokenSource.Token, subscribers));
         }
         #endregion
 
@@ -112,7 +105,7 @@ namespace AlMualim.Services
             }
         }
 
-        private void DelayedBroadcast(CancellationToken token)
+        private void DelayedBroadcast(CancellationToken token, List<Subscriptions> subscribers)
         {
             // Get delay time
             var delayTime = _configuration.GetValue<int>("SubscriptionEmailDelay");
@@ -123,8 +116,9 @@ namespace AlMualim.Services
                 return;
 
             // Get list of notes and subscribers
-            var notesList = _queue.ToList();
-            var subscribers = _context.Subscriptions.ToList();
+            var notesList = _queue.GetNotes();
+            if (notesList == null || notesList.Count == 0)
+                return;
 
             // Generate email
             var emails = _generator.GenerateBroadcast(notesList, subscribers);
